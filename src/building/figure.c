@@ -1465,6 +1465,9 @@ static void spawn_figure_barracks(building *b)
             spawn_delay += city_data.mess_hall.food_stress_cumulative - 20;
         }
 
+        // [rlaw]: hack instant barracks spawning
+        spawn_delay = 0;
+
         b->figure_spawn_delay++;
         if (b->figure_spawn_delay > spawn_delay) {
             b->figure_spawn_delay = 0;
