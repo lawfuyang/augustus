@@ -52,6 +52,10 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/")
 
 set(CMAKE_C_STANDARD 99)
 
+set(CMAKE_SUPPRESS_REGENERATION true)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")     # Multi-Processor compilation
+
 if(CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-missing-field-initializers -Wno-sign-compare -Werror=implicit-function-declaration")
     if(CMAKE_C_COMPILER_VERSION VERSION_GREATER 5.0)
