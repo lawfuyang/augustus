@@ -180,6 +180,9 @@ void map_desirability_update(void)
     map_desirability_clear();
     update_buildings();
     update_terrain();
+
+    // [rlaw]: hack desirability to max
+    map_grid_init_i8(desirability_grid.items, 100);
 }
 
 int map_desirability_get(int grid_offset)
