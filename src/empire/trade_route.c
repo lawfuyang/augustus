@@ -100,6 +100,9 @@ void trade_route_reset_traded(int route_id)
 
 int trade_route_limit_reached(int route_id, resource_type resource)
 {
+    // [rlaw]: hack remove trade limit
+    return 0;
+
     route_resource *route = array_item(routes, route_id);
     return route->traded[resource] >= route->limit[resource];
 }
