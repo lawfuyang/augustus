@@ -278,6 +278,10 @@ static void update_image(figure *f)
 }
 
 static int cartpusher_percentage_speed(figure* f) {
+
+    // [rlaw]: hack 5x cartpusher speed
+    return 500;
+
     // Ceres grand temple base bonus
     building* src_building = building_get(f->building_id);
     int src_building_type = src_building->type;
