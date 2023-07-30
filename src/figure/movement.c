@@ -403,8 +403,13 @@ void figure_movement_move_ticks_with_percentage(figure* f, int num_ticks, int ti
     int progress = f->progress_to_next_tick + tick_percentage;
 
     if (progress >= 100) {
-        progress -= 100;
-        num_ticks++;
+
+        // [rlaw]: add 'while' loop to accomdate high tick_percentages
+        while (progress >= 100) {
+            progress -= 100;
+            num_ticks++;
+        }
+
     } else if (progress <= -100) {
         progress += 100;
         num_ticks--;
