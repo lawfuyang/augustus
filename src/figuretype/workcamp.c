@@ -116,7 +116,7 @@ void figure_workcamp_worker_action(figure *f)
             break;
 
         case FIGURE_ACTION_204_WORK_CAMP_WORKER_GETTING_RESOURCES:
-            figure_movement_move_ticks(f, 1);
+            figure_movement_move_ticks(f, 5); // [rlaw]: hack 5x work camp speed
             if (f->direction == DIR_FIGURE_AT_DESTINATION) {
                 building_monument_remove_delivery(f->id);
                 warehouse_id = f->destination_building_id;
@@ -139,7 +139,7 @@ void figure_workcamp_worker_action(figure *f)
             }
             break;
         case FIGURE_ACTION_205_WORK_CAMP_WORKER_GOING_TO_MONUMENT:
-            figure_movement_move_ticks(f, 1);
+            figure_movement_move_ticks(f, 5); // [rlaw]: hack 5x work camp speed
             if (f->direction == DIR_FIGURE_AT_DESTINATION || f->direction == DIR_FIGURE_LOST) {
                 f->action_state = FIGURE_ACTION_216_WORK_CAMP_WORKER_ENTERING_MONUMENT;
                 building *monument = building_get(f->destination_building_id);
@@ -207,7 +207,7 @@ void figure_workcamp_slave_action(figure *f)
             }
             break;
         case FIGURE_ACTION_210_WORK_CAMP_SLAVE_GOING_TO_MONUMENT:
-            figure_movement_move_ticks(f, 1);
+            figure_movement_move_ticks(f, 5); // [rlaw]: hack 5x work camp speed
             if (f->direction == DIR_FIGURE_AT_DESTINATION || f->direction == DIR_FIGURE_LOST) {
                 f->action_state = FIGURE_ACTION_211_WORK_CAMP_SLAVE_DELIVERING_RESOURCES;
                 building *monument = building_get(f->destination_building_id);
@@ -285,7 +285,7 @@ void figure_workcamp_engineer_action(figure *f)
             figure_image_update(f, image_group(GROUP_FIGURE_ENGINEER));
             break;
         case FIGURE_ACTION_207_WORK_CAMP_ARCHITECT_GOING_TO_MONUMENT:
-            figure_movement_move_ticks(f, 1);
+            figure_movement_move_ticks(f, 5); // [rlaw]: hack 5x work camp speed
             monument = building_get(f->destination_building_id);
             if (monument->state == BUILDING_STATE_UNUSED || !building_monument_access_point(monument, &dst) ||
                 b->monument.phase == MONUMENT_FINISHED) {
