@@ -27,6 +27,8 @@ typedef enum {
     PARAMETER_TYPE_MEDIA_TYPE,
     PARAMETER_TYPE_CUSTOM_MESSAGE,
     PARAMETER_TYPE_CUSTOM_VARIABLE,
+    PARAMETER_TYPE_RATING_TYPE,
+    PARAMETER_TYPE_STORAGE_TYPE,
 } parameter_type;
 
 typedef struct {
@@ -72,5 +74,8 @@ special_attribute_mapping_t *scenario_events_parameter_data_get_attribute_mappin
 int scenario_events_parameter_data_get_mappings_size(parameter_type type);
 
 int scenario_events_parameter_data_get_default_value_for_parameter(xml_data_attribute_t *attribute_data);
+
+const uint8_t *scenario_events_parameter_data_get_display_string(special_attribute_mapping_t *entry);
+void scenario_events_parameter_data_get_display_string_for_value(parameter_type type, int value, uint8_t *result_text, int maxlength);
 
 #endif // SCENARIO_EVENTS_PARAMETER_DATA_H

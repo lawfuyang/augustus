@@ -55,20 +55,12 @@ void map_water_add_building(int building_id, int x, int y, int size)
     }
 }
 
-static int blocked_land_terrain(void)
-{
-    return
-        TERRAIN_TREE | TERRAIN_ROCK | TERRAIN_WATER |
-        TERRAIN_BUILDING | TERRAIN_SHRUB | TERRAIN_GARDEN |
-        TERRAIN_ROAD | TERRAIN_ELEVATION | TERRAIN_RUBBLE;
-}
-
 static int is_blocked_tile(int grid_offset)
 {
     if (map_terrain_is(grid_offset, TERRAIN_WATER)) {
         return map_terrain_is(grid_offset, TERRAIN_ROCK | TERRAIN_ROAD | TERRAIN_BUILDING);
     }
-    return map_terrain_is(grid_offset, blocked_land_terrain());
+    return map_terrain_is(grid_offset, TERRAIN_NOT_CLEAR);
 }
 
 int map_water_determine_orientation(int x, int y, int size, int adjust_xy,
@@ -235,12 +227,9 @@ int map_water_has_water_in_front(int x, int y, int adjust_xy, const waterside_ti
     int dy = loop->start.y;
     int water_ok = 1;
     int index = 0;
-    int outer_corners[2];
     for (int outer = 0; outer < MAP_WATER_WATERSIDE_ROWS_NEEDED; outer++) {
         for (int inner = 0; inner < loop->inner_length; inner++) {
-            if (outer == MAP_WATER_WATERSIDE_ROWS_NEEDED - 1 && (inner == 0 || inner == loop->inner_length - 1)) {
-                outer_corners[inner != 0] = !map_terrain_is(base_offset + OFFSET(dx, dy), TERRAIN_WATER);
-            } else if (!map_terrain_is(base_offset + OFFSET(dx, dy), TERRAIN_WATER)) {
+            if (!map_terrain_is(base_offset + OFFSET(dx, dy), TERRAIN_WATER)) {
                 water_ok = 0;
                 if (land_tiles) {
                     land_tiles[index] = 1;
@@ -261,14 +250,6 @@ int map_water_has_water_in_front(int x, int y, int adjust_xy, const waterside_ti
             dy = loop->start.y;
             dx += loop->outer_step.x;
         }
-    }
-    // Check outer corners: at least one of them must be water for the building to be placable
-    if (water_ok && outer_corners[0] && outer_corners[1]) {
-        water_ok = 0;
-    }
-    if (!water_ok && land_tiles) {
-        land_tiles[index - 1] = outer_corners[1];
-        land_tiles[index - loop->inner_length] = outer_corners[0];
     }
     return water_ok;
 }
