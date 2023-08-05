@@ -61,9 +61,8 @@ static struct {
         int last_fps;
         Uint32 last_update_time;
     } fps;
+    FILE *log_file;
 } data = { 1 };
-
-static FILE *log_file = 0;
 
 static void write_to_output(FILE *output, const char *message)
 {
@@ -75,8 +74,8 @@ static void write_log(void *userdata, int category, SDL_LogPriority priority, co
 {
     char log_text[300] = { 0 };
     snprintf(log_text, 300, "%s %s\n", priority == SDL_LOG_PRIORITY_ERROR ? "ERROR: " : "INFO: ", message);
-    if (log_file) {
-        write_to_output(log_file, log_text);
+    if (data.log_file) {
+        write_to_output(data.log_file, log_text);
     }
     // On Windows MSVC, we can at least get output to the debug window
 #if defined(_MSC_VER) && !defined(NDEBUG)
@@ -88,26 +87,9 @@ static void write_log(void *userdata, int category, SDL_LogPriority priority, co
 
 static void backup_log(void)
 {
-    FILE *in = file_open("augustus-log.txt", "rb");
-    if (!in) {
-        return;
-    }
-    FILE *out = file_open("augustus-log-backup.txt", "wb");
-    if (!out) {
-        fclose(in);
-        return;
-    }
-
-    char buf[1024];
-    size_t read = 0;
-
-    while ((read = fread(buf, 1, 1024, in)) == 1024) {
-        fwrite(buf, 1, 1024, out);
-    }
-    fwrite(buf, 1, read, out);
-
-    file_close(out);
-    file_close(in);
+    // On some platforms (vita, android), not removing the file will not empty it when reopening for writing
+    file_remove("augustus-log-backup.txt");
+    platform_file_manager_copy_file("augustus-log.txt", "augustus-log-backup.txt");
 }
 
 static void setup_logging(void)
@@ -116,7 +98,7 @@ static void setup_logging(void)
 
     // On some platforms (vita, android), not removing the file will not empty it when reopening for writing
     file_remove("augustus-log.txt");
-    log_file = file_open("augustus-log.txt", "wt");
+    data.log_file = file_open("augustus-log.txt", "wt");
     SDL_LogSetOutputFunction(write_log, NULL);
 }
 
@@ -124,8 +106,8 @@ static void teardown_logging(void)
 {
     log_repeated_messages();
 
-    if (log_file) {
-        file_close(log_file);
+    if (data.log_file) {
+        file_close(data.log_file);
     }
 }
 
@@ -569,8 +551,10 @@ static void setup(const augustus_args *args)
     system_setup_crash_handler();
     setup_logging();
 
-    SDL_Log("Augustus version %s, %s build", system_version(), system_architecture());
-    SDL_Log("Running on: %s", system_OS());
+    if (data.log_file) {
+        SDL_Log("Augustus version %s, %s build", system_version(), system_architecture());
+        SDL_Log("Running on: %s", system_OS());
+    }
 
     if (!init_sdl()) {
         SDL_Log("Exiting: SDL init failed");
@@ -580,6 +564,15 @@ static void setup(const augustus_args *args)
     if (!pre_init(args->data_directory)) {
         SDL_Log("Exiting: game pre-init failed");
         exit_with_status(1);
+    }
+
+    // If starting the log file failed (because, for example, the executable path isn't writable)
+    // try again, placing the log file on the C3 path
+    if (!data.log_file) {
+        setup_logging();
+        // We always want this info
+        SDL_Log("Augustus version %s, %s build", system_version(), system_architecture());
+        SDL_Log("Running on: %s", system_OS());
     }
 
     if (args->force_windowed && setting_fullscreen()) {
