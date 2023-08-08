@@ -135,7 +135,6 @@ static input_box main_input = {
     .font = FONT_NORMAL_WHITE,
     .text = data.filter_text,
     .text_length = FILTER_TEXT_SIZE,
-    .put_clear_button_outside_box = 1,
     .on_change = input_box_changed
 };
 
@@ -284,11 +283,13 @@ static void init(file_type type, file_dialog_type dialog_type)
         main_input.text = data.typed_name;
         main_input.text_length = FILE_NAME_MAX;
         main_input.width_blocks = 38;
+        main_input.put_clear_button_outside_box = 0;
     } else {
         main_input.placeholder = lang_get_string(CUSTOM_TRANSLATION, TR_SAVE_DIALOG_FILTER);
         main_input.text = data.filter_text;
         main_input.text_length = FILTER_TEXT_SIZE;
         main_input.width_blocks = 18;
+        main_input.put_clear_button_outside_box = 1;
     }
 
     input_box_start(&main_input);
@@ -407,7 +408,13 @@ static void draw_foreground(void)
                 }
             } else {
                 if (data.dialog_type == FILE_DIALOG_SAVE) {
-                    text_draw_centered(translation_for(TR_SAVE_DIALOG_NEW_FILE), 362, 246, 246, FONT_NORMAL_BLACK, 0);
+                    if (*data.typed_name) {
+                        text_draw_centered(translation_for(TR_SAVE_DIALOG_NEW_FILE),
+                            362, 246, 246, FONT_NORMAL_BLACK, 0);
+                    } else {
+                        text_draw_centered(translation_for(TR_SAVE_DIALOG_SELECT_FILE),
+                            362, 246, 246, FONT_NORMAL_BLACK, 0);
+                    }
                 } else {
                     translation_key key = data.savegame_info_status == SAVEGAME_STATUS_INVALID ?
                         TR_SAVE_DIALOG_INVALID_FILE : TR_SAVE_DIALOG_INCOMPATIBLE_VERSION;
@@ -587,7 +594,9 @@ static void input_box_changed(int is_addition_at_end)
             scroll_index = find_first_file_with_prefix(data.selected_file);
         }
         file_append_extension(data.selected_file, data.file_data->extension);
-        if (scroll_index >= 0 && strcmp(data.selected_file, data.filtered_file_list.files[scroll_index].name) == 0) {
+        if (scroll_index >= 0 &&
+            platform_file_manager_compare_filename(data.selected_file,
+                data.filtered_file_list.files[scroll_index].name) == 0) {
             data.selected_index = scroll_index + 1;
         } else {
             data.selected_index = 0;
@@ -649,6 +658,7 @@ static void confirm_save_file(int accepted, int checked)
         custom_messages_export_to_xml(filename);
         window_editor_custom_messages_show();
     }
+    strncpy(data.file_data->last_loaded_file, data.selected_file, FILE_NAME_MAX);
 }
 
 static void button_ok_cancel(int is_ok, int param2)
@@ -656,6 +666,10 @@ static void button_ok_cancel(int is_ok, int param2)
     if (!is_ok) {
         input_box_stop(&main_input);
         window_go_back();
+        return;
+    }
+
+    if (!*data.typed_name) {
         return;
     }
 
@@ -670,7 +684,6 @@ static void button_ok_cancel(int is_ok, int param2)
         if (data.type == FILE_TYPE_SAVED_GAME) {
             int result = game_file_load_saved_game(filename);
             if (result == FILE_LOAD_SUCCESS) {
-                input_box_stop(&main_input);
                 window_city_show();
             } else if (result == FILE_LOAD_DOES_NOT_EXIST) {
                 data.message_not_exist_start_time = time_get_millis();
@@ -686,7 +699,6 @@ static void button_ok_cancel(int is_ok, int param2)
             }
         } else if (data.type == FILE_TYPE_SCENARIO) {
             if (game_file_editor_load_scenario(filename)) {
-                input_box_stop(&main_input);
                 window_editor_map_show();
             } else {
                 data.message_not_exist_start_time = time_get_millis();
@@ -718,6 +730,7 @@ static void button_ok_cancel(int is_ok, int param2)
                 return;
             }
         }
+        input_box_stop(&main_input);
         strncpy(data.file_data->last_loaded_file, data.selected_file, FILE_NAME_MAX);
     } else if (data.dialog_type == FILE_DIALOG_SAVE) {
         if (config_get(CONFIG_UI_ASK_CONFIRMATION_ON_FILE_OVERWRITE) && file_exists(filename, NOT_LOCALIZED)) {
@@ -766,16 +779,17 @@ static void button_toggle_sort_type(int param1, int param2)
 
 static void button_select_file(int index, int param2)
 {
-    if (index + scrollbar.scroll_position >= data.filtered_file_list.num_files) {
+    int selection = index + scrollbar.scroll_position;
+    if (selection < 0 || selection >= data.filtered_file_list.num_files) {
         if (data.double_click) {
             data.double_click = 0;
         }
         return;
     }
-    if (strcmp(data.selected_file, data.filtered_file_list.files[scrollbar.scroll_position + index].name) != 0) {
-        data.selected_index = scrollbar.scroll_position + index + 1;
+    if (strcmp(data.selected_file, data.filtered_file_list.files[selection].name) != 0) {
+        data.selected_index = selection + 1;
         data.message_not_exist_start_time = 0;
-        strncpy(data.selected_file, data.filtered_file_list.files[scrollbar.scroll_position + index].name, FILE_NAME_MAX - 1);
+        strncpy(data.selected_file, data.filtered_file_list.files[selection].name, FILE_NAME_MAX - 1);
         if (data.dialog_type == FILE_DIALOG_SAVE) {
             file_remove_extension(data.selected_file);
         }
