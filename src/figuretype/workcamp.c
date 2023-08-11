@@ -33,7 +33,7 @@ static int create_slave_workers(int leader_id, int first_figure_id)
     slave->destination_y = f->destination_y;
     slave->action_state = FIGURE_ACTION_209_WORK_CAMP_SLAVE_FOLLOWING;
     slave->wait_ticks = VALID_MONUMENT_RECHECK_TICKS;
-    building_monument_add_delivery(slave->destination_building_id, f->id, f->collecting_item_id, 1);
+    building_monument_add_delivery(slave->destination_building_id, slave->id, slave->collecting_item_id, 1);
     return slave->id;
 }
 
@@ -139,6 +139,7 @@ void figure_workcamp_worker_action(figure *f)
             }
             figure_movement_move_ticks(f, 5); // [rlaw]: hack 5x work camp speed
             if (f->direction == DIR_FIGURE_AT_DESTINATION) {
+                building_monument_remove_delivery(f->id);
                 warehouse_id = f->destination_building_id;
                 monument_id = building_monument_get_monument(b->x, b->y, f->collecting_item_id, b->road_network_id, &dst);
                 f->action_state = FIGURE_ACTION_205_WORK_CAMP_WORKER_GOING_TO_MONUMENT;
@@ -148,13 +149,14 @@ void figure_workcamp_worker_action(figure *f)
                 f->previous_tile_x = f->x;
                 f->previous_tile_y = f->y;
                 f->wait_ticks = VALID_MONUMENT_RECHECK_TICKS;
-                int figure_id = f->id;
                 if (!monument_id) {
                     f->state = FIGURE_STATE_DEAD;
                 } else if (!take_resource_from_warehouse(f, warehouse_id)) {
                     f->state = FIGURE_STATE_DEAD;
+                } else {
+                    // Placeholder delivery
+                    building_monument_add_delivery(monument_id, f->id, f->collecting_item_id, 0);
                 }
-                f = figure_get(figure_id);
             } else if (f->direction == DIR_FIGURE_REROUTE || f->direction == DIR_FIGURE_LOST) {
                 f->state = FIGURE_STATE_DEAD;
             }
