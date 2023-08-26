@@ -9,11 +9,13 @@
 #include <math.h>
 #include <string.h>
 
-#define NUM_CLOUD_ELLIPSES 30
-#define CLOUD_ALPHA_CUTOFF 32
+#define NUM_CLOUD_ELLIPSES 240
+#define CLOUD_ALPHA_INCREASE 32
+#define CLOUD_COLOR_MASK ((0x48 << COLOR_BITSHIFT_ALPHA) | COLOR_CHANNEL_RGB)
 
 #define CLOUD_WIDTH 64
 #define CLOUD_HEIGHT 64
+#define CLOUD_SIZE_RATIO 0.05
 
 #define CLOUD_SCALE 12
 
@@ -80,8 +82,8 @@ static void position_ellipse(ellipse *e, int cloud_width, int cloud_height)
     e->x = (int) (CLOUD_WIDTH / 2 + random_fractional_from_stdlib() * cloud_width * cos(angle));
     e->y = (int) (CLOUD_HEIGHT / 2 + random_fractional_from_stdlib() * cloud_height * sin(angle));
 
-    e->width = random_from_min_to_range((int) (CLOUD_WIDTH * 0.10), (int) (CLOUD_WIDTH * 0.10));
-    e->height = random_from_min_to_range((int) (CLOUD_HEIGHT * 0.10), (int) (CLOUD_HEIGHT * 0.10));
+    e->width = random_from_min_to_range((int) (CLOUD_WIDTH * CLOUD_SIZE_RATIO), (int) (CLOUD_WIDTH * CLOUD_SIZE_RATIO));
+    e->height = random_from_min_to_range((int) (CLOUD_HEIGHT * CLOUD_SIZE_RATIO), (int) (CLOUD_HEIGHT * CLOUD_SIZE_RATIO));
 
     e->half_width = e->width / 2;
     e->half_height = e->height / 2;
@@ -100,21 +102,19 @@ static int ellipse_is_inside_bounds(const ellipse *e)
         y - e->height >= 0 && y + e->height < CLOUD_HEIGHT;
 }
 
-static void set_alpha(color_t *cloud, int x, int y, int alpha)
+static void darken_pixel(color_t *cloud, int x, int y)
 {
-    alpha = 255 - alpha;
+    int pixel = y * CLOUD_WIDTH + x;
 
-    int index = y * CLOUD_WIDTH + x;
+    int alpha = cloud[pixel] >> COLOR_BITSHIFT_ALPHA;
+    alpha = (alpha + ((CLOUD_ALPHA_INCREASE * (255 - alpha)) >> 8));
 
-    int current_alpha = cloud[index] >> COLOR_BITSHIFT_ALPHA;
-
-    alpha = (current_alpha + ((alpha * (255 - current_alpha)) >> 8));
-
-    if (alpha > CLOUD_ALPHA_CUTOFF) {
-        alpha = CLOUD_ALPHA_CUTOFF;
+    // Clamp
+    if (alpha > 255) {
+        alpha = 255;
     }
 
-    cloud[index] = ALPHA_TRANSPARENT | (alpha << COLOR_BITSHIFT_ALPHA);
+    cloud[pixel] = ALPHA_TRANSPARENT | (alpha << COLOR_BITSHIFT_ALPHA);
 }
 
 static void generate_cloud_ellipse(color_t *cloud, int width, int height)
@@ -126,8 +126,7 @@ static void generate_cloud_ellipse(color_t *cloud, int width, int height)
 
     // Do the entire diameter
     for (int x = -e.width; x <= e.width; x++) {
-        int alpha = x * x * e.squared_height * 255 / e.width_times_height;
-        set_alpha(cloud, e.x + x, e.y, alpha);
+        darken_pixel(cloud, e.x + x, e.y);
     }
 
     int line_width = e.width;
@@ -146,18 +145,14 @@ static void generate_cloud_ellipse(color_t *cloud, int width, int height)
         line_delta = line_width - line_limit;
         line_width = line_limit;
 
-        int alpha = squared_y * e.squared_width * 255 / e.width_times_height;
-
-        set_alpha(cloud, e.x, e.y - y, alpha);
-        set_alpha(cloud, e.x, e.y + y, alpha);
+        darken_pixel(cloud, e.x, e.y - y);
+        darken_pixel(cloud, e.x, e.y + y);
 
         for (int x = 1; x <= line_width; x++) {
-            alpha = (x * x * e.squared_height + squared_y * e.squared_width) * 255 / e.width_times_height;
-
-            set_alpha(cloud, e.x + x, e.y - y, alpha);
-            set_alpha(cloud, e.x + x, e.y + y, alpha);
-            set_alpha(cloud, e.x - x, e.y - y, alpha);
-            set_alpha(cloud, e.x - x, e.y + y, alpha);
+            darken_pixel(cloud, e.x + x, e.y - y);
+            darken_pixel(cloud, e.x + x, e.y + y);
+            darken_pixel(cloud, e.x - x, e.y - y);
+            darken_pixel(cloud, e.x - x, e.y + y);
         }
     }
 }
@@ -278,7 +273,7 @@ void clouds_draw(int x_offset, int y_offset, int x_limit, int y_limit, float bas
         speed_set_target(&cloud->speed.y, CLOUD_SPEED / 2, SPEED_CHANGE_IMMEDIATE, 1);
 
         graphics_renderer()->draw_image_advanced(&cloud->img,
-            (cloud->x - x_offset) / base_scale, (cloud->y - y_offset) / base_scale, COLOR_MASK_NONE,
+            (cloud->x - x_offset) / base_scale, (cloud->y - y_offset) / base_scale, CLOUD_COLOR_MASK,
             cloud->scale_x * base_scale, cloud->scale_y * base_scale, cloud->angle, 1);
 
         cloud->x += speed_get_delta(&cloud->speed.x);
