@@ -164,6 +164,11 @@ static int get_height_id(void)
             case BUILDING_HEDGE_GATE_LIGHT:
             case BUILDING_PALISADE_GATE:
             case BUILDING_GLADIATOR_STATUE:
+            case BUILDING_SHRINE_CERES:
+            case BUILDING_SHRINE_NEPTUNE:
+            case BUILDING_SHRINE_MERCURY:
+            case BUILDING_SHRINE_MARS:
+            case BUILDING_SHRINE_VENUS:
                 return 1;
 
             case BUILDING_SENATE_1_UNUSED:
@@ -1032,6 +1037,8 @@ static void get_tooltip(tooltip_context *c)
         } else if (building_type_is_roadblock(btype)) {
             window_building_roadblock_get_tooltip_walker_permissions(&translation);
         }
+    } else if (building_is_house(btype)) {
+        precomposed_text = window_building_house_get_tooltip(&context);
     } else if (btype == BUILDING_GRANARY) {
         window_building_granary_get_tooltip_distribution_permissions(&translation);
     } else if (btype == BUILDING_WAREHOUSE) {

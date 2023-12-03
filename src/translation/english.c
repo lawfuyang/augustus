@@ -22,7 +22,7 @@ static translation_string all_strings[] = {
     {TR_INVALID_LANGUAGE_MESSAGE,
         "The directory you selected does not contain a valid language pack. "
         "Please check the log for errors."},
-    {TR_BUILD_ALL_TEMPLES, "All"},
+    {TR_AUTO_CYCLE_TEMPLES, "Auto cycle"},
     {TR_BUTTON_OK, "OK"},
     {TR_BUTTON_CANCEL, "Cancel"},
     {TR_BUTTON_RESET_DEFAULTS, "Reset defaults"},
@@ -332,6 +332,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_MESS_HALL_FOOD_TYPES_BONUS_2, "The diverse, nutritious diet enjoyed by your soldiers greatly increases morale."},
     {TR_BUILDING_MESS_HALL_NO_SOLDIERS, "You have no soldiers to feed." },
     {TR_BUILDING_MESS_HALL_MONTHS_FOOD_STORED, "Months of food stored:" },
+    {TR_BUILDING_MESS_HALL_NO_FOOD, "This supply post has employees, but they are currently looking for an available source of food." },
     {TR_MESS_HALL_SPECIAL_ORDERS_HEADER, "Supply post instructions"},
     {TR_BUILDING_BARRACKS_FOOD_WARNING, "Food shortages at your supply post are slowing soldier recruitment."},
     {TR_BUILDING_BARRACKS_FOOD_WARNING_2, "Critical food shortages at your supply post are crippling soldier recruitment." },
@@ -419,6 +420,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_CARAVANSERAI_POLICY_2, "Landed buyer's policy: Land imports are 20% cheaper, but land exports earn 10% less." },
     {TR_BUILDING_CARAVANSERAI_POLICY_3_TITLE, "Consilium quantitas terrae" },
     {TR_BUILDING_CARAVANSERAI_POLICY_3, "Landed quantity policy: Trade caravans carry 4 additional goods, but the Caravanserai consumes 20% more food." },
+    {TR_BUILDING_CARAVANSERAI_NO_FOOD, "This caravanserai has employees, but they are currently looking for an available source of food." },
     {TR_BUILDING_LIGHTHOUSE_PHASE_1, "(Foundation)" },
     {TR_BUILDING_LIGHTHOUSE_PHASE_2, "(Pedestal)" },
     {TR_BUILDING_LIGHTHOUSE_PHASE_3, "(Tower)" },
@@ -1336,18 +1338,14 @@ static translation_string all_strings[] = {
     {TR_BUILDING_PANELLED_GARDEN_WALL_GATE, "Paneled garden wall gate" },
     {TR_BUILDING_PANELLED_GARDEN_WALL_GATE_DESC, "This small gate controls the movement of people in and out of your city's most secluded spots." },
     {TR_HOTKEY_BUILD_HIGHWAY, "Highway" },
+    {TR_BUILDING_SHRINE_DESC, "Altars are appreciated not only by their neighbouring citizens but also by their respective gods."},
     {TR_BUILDING_SHRINE_CERES, "Ceres altar"},
-    {TR_BUILDING_SHRINE_CERES_DESC, "PLACEHOLDER CERES ALTAR DESCRIPTION"},
     {TR_BUILDING_SHRINE_MARS, "Mars altar"},
-    {TR_BUILDING_SHRINE_MARS_DESC, "PLACEHOLDER MARS ALTAR DESCRIPTION" },
     {TR_BUILDING_SHRINE_MERCURY, "Mercury altar"},
-    {TR_BUILDING_SHRINE_MERCURY_DESC, "PLACEHOLDER MERCURY ALTAR DESCRIPTION" },
     {TR_BUILDING_SHRINE_NEPTUNE, "Neptune altar"},
-    {TR_BUILDING_SHRINE_NEPTUNE_DESC, "PLACEHOLDER NEPTUNE ALTAR DESCRIPTION" },
     {TR_BUILDING_SHRINE_VENUS, "Venus altar"},
-    {TR_BUILDING_SHRINE_VENUS_DESC, "PLACEHOLDER VENUS ALTAR DESCRIPTION" },
     {TR_BUILDING_MENU_SHRINES, "Altar" },
-
+    {TR_BUILDING_INFO_TOTAL_FOOD, "Total food:" },
 };
 
 void translation_english(const translation_string **strings, int *num_strings)
