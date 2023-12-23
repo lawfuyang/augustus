@@ -101,6 +101,9 @@ static int has_required_goods_and_services(building *house, int for_upgrade, int
     }
     // religion
     int religion = model->religion;
+    if (religion > 3) {
+        religion = 3;
+    }
     if (house->data.house.num_gods < religion) {
         if (religion == 1) {
             ++demands->missing.religion;
@@ -108,7 +111,7 @@ static int has_required_goods_and_services(building *house, int for_upgrade, int
         } else if (religion == 2) {
             ++demands->missing.second_religion;
             return 0;
-        } else if (religion == 3) {
+        } else if (religion >= 3) {
             ++demands->missing.third_religion;
             return 0;
         }
@@ -681,6 +684,9 @@ void building_house_determine_evolve_text(building *house, int worst_desirabilit
     }
     // religion
     int religion = model->religion;
+    if (religion > 3) {
+        religion = 3;
+    }
     if (house->data.house.num_gods < religion) {
         if (religion == 1) {
             house->data.house.evolve_text_id = 20;
@@ -820,6 +826,9 @@ void building_house_determine_evolve_text(building *house, int worst_desirabilit
     }
     // religion
     religion = model->religion;
+    if (religion > 3) {
+        religion = 3;
+    }
     if (house->data.house.num_gods < religion) {
         if (religion == 1) {
             house->data.house.evolve_text_id = 50;
