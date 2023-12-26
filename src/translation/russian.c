@@ -22,7 +22,7 @@ static translation_string all_strings[] = {
     {TR_INVALID_LANGUAGE_MESSAGE,
         "Выбранная папка не содержит необходимых файлов локализации."
         "Для просмотра ошибок обратитесь к log-файлу."},
-    {TR_AUTO_CYCLE_TEMPLES, "Все"},
+    {TR_AUTO_CYCLE_TEMPLES, "Автоцикл"},
     {TR_BUTTON_OK, "Да"},
     {TR_BUTTON_CANCEL, "Отмена"},
     {TR_BUTTON_RESET_DEFAULTS, "По умолчанию"},
@@ -1347,6 +1347,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_INFO_TOTAL_FOOD, "Всего еды:" },
     {TR_BUILDING_FORMAL_GARDENS, "Формальные сады" },
     {TR_BUILDING_OVERGROWN_GARDENS, "Заросшие сады" },
+    {TR_WINDOW_ADVISOR_RELIGION_ALTARS_HEADER, "святил."},
 };
 
 void translation_russian(const translation_string **strings, int *num_strings)
