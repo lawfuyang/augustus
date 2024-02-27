@@ -1371,6 +1371,14 @@ static translation_string all_strings[] = {
     {TR_REPLAY_MAP_NOT_FOUND_MESSAGE, "Оригинальный файл карты для этой сохраненной игры не был найден.\nВам нужен следующий файл с расширением .map или .mapx:"},
     {TR_BUILDING_FORT_AUXILIA_INFANTRY, "Наемники - Пехотинцы"},
     {TR_WINDOW_ADVISOR_MILITARY_INFANTRY, "пехотинец"},
+    {TR_TOOLTIP_BUTTON_ROADBLOCK_ORDER_ACCEPT_ALL, "Принимать всех граждан"},
+    {TR_TOOLTIP_BUTTON_ROADBLOCK_ORDER_REJECT_ALL, "Отказывать всех граждан"},
+    {TR_FIGURE_TYPE_BEGGAR, "Нищий"},
+    {TR_BUILDING_ARMOURY, "Оружейная" },
+    {TR_BUILDING_ARMOURY_NO_EMPLOYEES, "Без доступа к сотрудникам арсенал не сможет поставлять оружие нашим солдатам. Пусть Марс защитит вас, потому что безоружные легионы не смогут этого сделать."},
+    {TR_BUILDING_ARMOURY_SOME_EMPLOYEES, "Поскольку оружейные склады работают лишь частично, полное вооружение легионов займет значительное время. Остается надеяться, что враги Рима не будут торопиться."},
+    {TR_BUILDING_ARMOURY_MANY_EMPLOYEES, "Оружейная способна поставлять оружие солдатам, но из-за нехватки работников его периодически не хватает."},
+    {TR_BUILDING_ARMOURY_DESC, "Оружейная следит за тем, чтобы наши солдаты быстро и эффективно снабжались оружием. Варвары не могут сравниться с римской логистикой." },
 };
 
 void translation_russian(const translation_string **strings, int *num_strings)

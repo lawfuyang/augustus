@@ -1373,7 +1373,13 @@ static translation_string all_strings[] = {
     {TR_BUILDING_FORT_AUXILIA_INFANTRY, "Auxiliaries - Infantry"},
     {TR_WINDOW_ADVISOR_MILITARY_INFANTRY, "Infantrymen"},
     {TR_TOOLTIP_BUTTON_ROADBLOCK_ORDER_ACCEPT_ALL, "Accept all walkers"},
-    {TR_TOOLTIP_BUTTON_ROADBLOCK_ORDER_REJECT_ALL, "Refuse all walkers"}
+    {TR_TOOLTIP_BUTTON_ROADBLOCK_ORDER_REJECT_ALL, "Refuse all walkers"},
+    {TR_FIGURE_TYPE_BEGGAR, "Beggar"},
+    {TR_BUILDING_ARMOURY, "Armory" },
+    {TR_BUILDING_ARMOURY_NO_EMPLOYEES, "Without access to employees the armory cannot deliver weapons to our soldiers. May Mars protect you, because the unarmed legions won't."},
+    {TR_BUILDING_ARMOURY_SOME_EMPLOYEES, "With armory being only partially staffed, fully equipping the legions will take considerable time. Hopefully the enemies of Rome will take their time."},
+    {TR_BUILDING_ARMOURY_MANY_EMPLOYEES, "The armory is able to deliver weapons to soldiers, but lack of employees causes occassional shortages."},
+    {TR_BUILDING_ARMOURY_DESC, "The armory makes sure that our soldiers are quickly and efficiently supplied with weapons. The barbarians are no match for Roman logistics." },
 };
 
 void translation_english(const translation_string **strings, int *num_strings)

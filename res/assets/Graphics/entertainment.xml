@@ -301,6 +301,23 @@
 			<frame group="this" image="Arena_On_06"/>
 		</animation>
 	</image>
+	<!-- Note: Arena Upgrade Off Variant -->
+	<image id="Arena Upgrade OFF" width="178" height="152" isometric="true">
+		<layer group="this" image="Arena OFF" x="0" y="0"/>
+		<layer src="Arena_Off_Upgrade" x="0" y="20"/>
+	</image>
+	<!-- Note: Arena Upgrade ON Variant Animation -->
+	<image id="Arena Upgrade ON" width="178" height="152" isometric="true">
+		<layer group="this" image="Arena Upgrade OFF"/>
+		<animation speed="9" x="44" y="29" reversible="false">
+			<frame group="this" image="Arena_On_01"/>
+			<frame group="this" image="Arena_On_02"/>
+			<frame group="this" image="Arena_On_03"/>
+			<frame group="this" image="Arena_On_04"/>
+			<frame group="this" image="Arena_On_05"/>
+			<frame group="this" image="Arena_On_06"/>
+		</animation>
+	</image>
 	<!-- Note: Tavern OFF Variant -->
 	<image id="Tavern OFF" src="Tavern_OFF" isometric="true"/>
 	<!-- Note: Tavern Variant supplied with wine/food but not working/missing employees -->
@@ -338,6 +355,48 @@
 			<frame group="this" image="Tavern_ON_03"/>
 			<frame group="this" image="Tavern_ON_04"/>
 			<frame group="this" image="Tavern_ON_05"/>
+		</animation>
+	</image>
+	<!-- Note: Tavern Upgrade Off Variant -->
+	<image id="Tavern Upgrade OFF" width="118" height="82" isometric="true">
+		<layer group="this" image="Tavern OFF" x="0" y="0"/>
+		<layer src="Tavern_OFF_Upgrade" x="0" y="0"/>
+	</image>
+	<!-- Note: Tavern Upgrade Variant supplied with wine/food but not working/missing employees -->
+	<image id="Tavern Upgrade Supp" isometric="true">
+		<layer group="this" image="Tavern Upgrade OFF"/>
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+	</image>
+	<!-- Note: Tavern Upgrade ON animation reference DO NOT USE! -->
+	<image id="Tavern_UG_ON_01" width="118" height="82">
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+		<layer src="Tavern_ON_01" x="11" y="28"/>
+	</image>
+	<image id="Tavern_UG_ON_02" width="118" height="82">
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+		<layer src="Tavern_ON_02" x="11" y="28"/>
+	</image>
+	<image id="Tavern_UG_ON_03" width="118" height="82">
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+		<layer src="Tavern_ON_03" x="11" y="28"/>
+	</image>
+	<image id="Tavern_UG_ON_04" width="118" height="82">
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+		<layer src="Tavern_ON_04" x="11" y="28"/>
+	</image>
+	<image id="Tavern_UG_ON_05" width="118" height="82">
+		<layer src="Tavern_Supplied_Upgrade" x="9" y="36"/>
+		<layer src="Tavern_ON_05" x="11" y="28"/>
+	</image>
+	<!-- Note: Tavern Upgrade ON Animations -->
+	<image id="Tavern Upgrade ON" isometric="true">
+		<layer group="this" image="Tavern Upgrade OFF"/>
+		<animation speed="8" x="0" y="0" reversible="false">
+			<frame group="this" image="Tavern_UG_ON_01"/>
+			<frame group="this" image="Tavern_UG_ON_02"/>
+			<frame group="this" image="Tavern_UG_ON_03"/>
+			<frame group="this" image="Tavern_UG_ON_04"/>
+			<frame group="this" image="Tavern_UG_ON_05"/>
 		</animation>
 	</image>
 	<!-- Note: Theatre ON reference assets (DO NOT USE!) -->
@@ -591,6 +650,135 @@
 			<frame group="this" image="Theatre_UP_ON_19"/>
 			<frame group="this" image="Theatre_UP_ON_20"/>
 			<frame group="this" image="Theatre_UP_ON_21"/>
+		</animation>
+	</image>
+	<!-- Note: Amphitheatre ON reference assets (DO NOT USE!) -->
+	<image id="Amphitheatre_ON_01" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="1" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_02" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="2" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_03" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="3" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_04" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="4" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_05" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="5" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_06" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="6" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_07" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="7" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_08" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="8" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_09" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="9" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<image id="Amphitheatre_ON_10" width="104" height="57">
+		<layer group="192" x="0" y="0"/>
+		<layer group="45" image="10" x="63" y="13"/>
+		<layer src="Amphitheatre_Fix" x="56" y="1"/>
+	</image>
+	<!-- Note: Amphitheatre Vanilla ON Asset: USE THIS ONE! -->
+	<image id="Amphitheatre ON" width="178" height="146" isometric="true">
+		<layer group="45" y="0"/>
+		<animation speed="5" x="37" y="39" reversible="false">
+			<frame group="this" image="Amphitheatre_ON_01"/>
+			<frame group="this" image="Amphitheatre_ON_02"/>
+			<frame group="this" image="Amphitheatre_ON_03"/>
+			<frame group="this" image="Amphitheatre_ON_04"/>
+			<frame group="this" image="Amphitheatre_ON_05"/>
+			<frame group="this" image="Amphitheatre_ON_06"/>
+			<frame group="this" image="Amphitheatre_ON_07"/>
+			<frame group="this" image="Amphitheatre_ON_08"/>
+			<frame group="this" image="Amphitheatre_ON_09"/>
+			<frame group="this" image="Amphitheatre_ON_10"/>
+		</animation>
+	</image>
+	<!-- Note: Amphitheatre Upgrade OFF Asset: USE THIS ONE! -->
+	<image id="Amphitheatre Upgrade OFF" width="178" height="146" isometric="true">
+		<layer group="45" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State"/>
+	</image>
+	<!-- Note: Amphitheatre ON reference assets (DO NOT USE!) -->
+	<image id="Amphitheatre_UP_ON_01" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_01" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_02" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_02" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_03" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_03" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_04" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_04" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_05" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_05" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_06" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_06" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_07" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_07" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_08" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_08" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_09" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_09" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<image id="Amphitheatre_UP_ON_10" width="104" height="57">
+		<layer group="this" image="Amphitheatre_ON_10" x="0" y="0"/>
+		<layer src="Amphitheatre_Upgrade_State" x="-37" y="-39"/>
+	</image>
+	<!-- Note: Amphitheatre Upgrade ON Asset: USE THIS ONE! -->
+	<image id="Amphitheatre Upgrade ON" width="178" height="146" isometric="true">
+		<layer group="this" image="Amphitheatre Upgrade OFF"/>
+		<animation speed="5" x="37" y="39" reversible="false">
+			<frame group="this" image="Amphitheatre_UP_ON_01"/>
+			<frame group="this" image="Amphitheatre_UP_ON_02"/>
+			<frame group="this" image="Amphitheatre_UP_ON_03"/>
+			<frame group="this" image="Amphitheatre_UP_ON_04"/>
+			<frame group="this" image="Amphitheatre_UP_ON_05"/>
+			<frame group="this" image="Amphitheatre_UP_ON_06"/>
+			<frame group="this" image="Amphitheatre_UP_ON_07"/>
+			<frame group="this" image="Amphitheatre_UP_ON_08"/>
+			<frame group="this" image="Amphitheatre_UP_ON_09"/>
+			<frame group="this" image="Amphitheatre_UP_ON_10"/>
 		</animation>
 	</image>
 </assetlist>

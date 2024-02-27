@@ -187,6 +187,7 @@ static int get_height_id(void)
             case BUILDING_NYMPHAEUM:
             case BUILDING_SMALL_MAUSOLEUM:
             case BUILDING_LARGE_MAUSOLEUM:
+            case BUILDING_ARMOURY:
                 return 3;
 
             case BUILDING_WELL:
@@ -357,6 +358,7 @@ static void init(int grid_offset)
                 context.warehouse_space_text = building_warehouse_get_space_info(b);
                 break;
             case BUILDING_DEPOT:
+                context.has_road_access = map_has_road_access(b->x, b->y, b->size, 0);
                 game_state_set_overlay(OVERLAY_STORAGES);
                 window_building_depot_init_main(b->id);
                 break;
@@ -737,6 +739,8 @@ static void draw_background(void)
         } else if (btype == BUILDING_SHRINE_CERES || btype == BUILDING_SHRINE_MARS || btype == BUILDING_SHRINE_MERCURY ||
             btype == BUILDING_SHRINE_NEPTUNE || btype == BUILDING_SHRINE_VENUS) {
             window_building_draw_shrine(&context);
+        } else if (btype == BUILDING_ARMOURY) {
+            window_building_draw_armoury(&context);
         }
     } else if (context.type == BUILDING_INFO_LEGION) {
         window_building_draw_legion_info(&context);
