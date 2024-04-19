@@ -84,7 +84,11 @@ static void init(void)
     reset_campaign_data();
     setting_clear_personal_savings();
     scenario_settings_init();
-    player_name_input.placeholder = lang_get_string(9, 5);
+    const uint8_t *default_player_name = setting_player_name();
+    if (!string_length(default_player_name)) {
+        default_player_name = lang_get_string(9, 5);
+    }
+    player_name_input.placeholder = default_player_name;
     if (string_equals(player_name_input.placeholder, data.player_name)) {
         *data.player_name = 0;
     }
@@ -92,7 +96,7 @@ static void init(void)
     data.campaign_list = dir_append_files_with_extension("campaign");
     calculate_input_box_width();
     input_box_start(&player_name_input);
-    rich_text_set_fonts(FONT_NORMAL_BLACK, FONT_NORMAL_BLACK, 5);
+    rich_text_set_fonts(FONT_NORMAL_BLACK, FONT_NORMAL_BLACK, FONT_NORMAL_BLACK, 5);
     list_box_init(&list_box, data.campaign_list->num_files + 1);
     list_box_select_index(&list_box, ORIGINAL_CAMPAIGN_ID);
 }
@@ -226,7 +230,8 @@ static void start_mission(int param1, int param2)
         string_copy(player_name_input.placeholder, data.player_name, PLAYER_NAME_LENGTH);
     }
     scenario_set_campaign_rank(info->starting_rank);
-    setting_set_player_name(data.player_name);
+    scenario_set_player_name(data.player_name);
+    scenario_save_campaign_player_name();
     setting_set_personal_savings_for_mission(0, 0);
     input_box_stop(&player_name_input);
     window_mission_selection_show();
