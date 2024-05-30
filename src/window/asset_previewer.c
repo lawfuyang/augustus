@@ -62,7 +62,7 @@ typedef enum {
 #define REFRESHED_INFO_TIME_MS 5000
 
 static void draw_asset_entry(const list_box_item *item);
-static void select_asset(int index, int unused);
+static void select_asset(unsigned int index, int unused);
 static void handle_tooltip(const list_box_item *item, tooltip_context *c);
 static void button_top(int option, int param2);
 static void button_toggle_animation_frames(int param1, int param2);
@@ -111,8 +111,8 @@ static struct {
     const uint8_t *zoom_texts[TOTAL_ZOOM_VALUES];
     uint8_t *encoded_asset_id;
     int encoded_asset_id_size;
-    int focus_button_id;
-    int animation_button_focused;
+    unsigned int focus_button_id;
+    unsigned int animation_button_focused;
     int x_offset_top;
     asset_entry *entries;
     char *selected_asset_id;
@@ -161,7 +161,7 @@ static int update_entries(void)
     return total_entries;
 }
 
-static void select_asset(int index, int unused)
+static void select_asset(unsigned int index, int unused)
 {
     const asset_image *img = asset_image_get_from_id(data.active_group->first_image_index + data.entries[index].index);
     free(data.selected_asset_id);
@@ -512,7 +512,7 @@ static void advance_animation_frame(const image *img)
 
 static void draw_foreground(void)
 {
-    for (int i = 0; i < NUM_BUTTONS; i++) {
+    for (unsigned int i = 0; i < NUM_BUTTONS; i++) {
         const generic_button *btn = &buttons[i];
         int x_offset = btn->x + data.x_offset_top + 16;
         int width = btn->width;
@@ -748,7 +748,7 @@ static void button_toggle_animation_frames(int param1, int param2)
     recalculate_selected_index();
     window_invalidate();
 
-    for (int i = 0; i < list_box_get_total_items(&list_box); i++) {
+    for (unsigned int i = 0; i < list_box_get_total_items(&list_box); i++) {
         if (data.entries[i].index == asset_index ||
             (is_animation_frame && data.hide_animation_frames && data.entries[i].index > asset_index)) {
             list_box_show_index(&list_box, i);

@@ -31,7 +31,7 @@
 #define BACKGROUND_WIDTH 1024
 #define BACKGROUND_HEIGHT 768
 
-static void select_scenario(int index, int is_double_click);
+static void select_scenario(unsigned int index, int is_double_click);
 static void button_start_scenario(int param1, int param2);
 static void button_back(int param1, int param2);
 static void button_toggle_minimap(int param1, int param2);
@@ -61,7 +61,7 @@ static list_box_type list_box = {
 };
 
 static struct {
-    int focus_toggle_button;
+    unsigned int focus_toggle_button;
     int show_minimap;
     char selected_scenario_filename[FILE_NAME_MAX];
     uint8_t selected_scenario_display[FILE_NAME_MAX];
@@ -272,7 +272,7 @@ static void button_back(int param1, int param2)
     window_go_back();
 }
 
-static void select_scenario(int index, int is_double_click)
+static void select_scenario(unsigned int index, int is_double_click)
 {
     if (strcmp(data.selected_scenario_filename, data.scenarios->files[index].name) != 0) {
         snprintf(data.selected_scenario_filename, FILE_NAME_MAX, "%s", data.scenarios->files[index].name);
