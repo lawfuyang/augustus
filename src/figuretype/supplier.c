@@ -294,7 +294,23 @@ void figure_supplier_action(figure *f)
             break;
     }
     if (f->type == FIGURE_MESS_HALL_SUPPLIER) {
-        figure_tower_sentry_set_image(f);
+        int dir = figure_image_normalize_direction(f->direction < 8 ? f->direction : f->previous_tile_direction);
+        switch (f->action_state) {
+            case FIGURE_ACTION_150_ATTACK:
+                if (f->attack_image_offset < 14) {
+                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 5;
+                } else {
+                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 5 + ((f->attack_image_offset - 14) / 2);
+                }
+            case FIGURE_ACTION_149_CORPSE:
+                f->image_id = f->image_id = assets_get_image_id("Walkers", "quartermaster_death_01") +
+                    figure_image_corpse_offset(f);
+                break;
+            default:
+                f->image_id = assets_get_image_id("Walkers", "quartermaster_ne_01") +
+                    dir * 12 + f->image_offset;
+                break;
+        }
     } else if (f->type == FIGURE_PRIEST_SUPPLIER) {
         figure_image_update(f, image_group(GROUP_FIGURE_PRIEST));
     } else if (f->type == FIGURE_BARKEEP_SUPPLIER) {
@@ -307,13 +323,21 @@ void figure_supplier_action(figure *f)
                 dir * 12 + f->image_offset;
         }
     } else if (f->type == FIGURE_LIGHTHOUSE_SUPPLIER) {
+        if (f->action_state == FIGURE_ACTION_146_SUPPLIER_RETURNING) {
+            f->cart_image_id = resource_get_data(f->collecting_item_id)->image.cart.single_load;
+        } else {
+            f->cart_image_id = image_group(GROUP_FIGURE_CARTPUSHER_CART);
+        }
         int dir = figure_image_normalize_direction(f->direction < 8 ? f->direction : f->previous_tile_direction);
         if (f->action_state == FIGURE_ACTION_149_CORPSE) {
-            f->image_id = assets_get_image_id("Walkers", "Slave death 01") +
-                figure_image_corpse_offset(f);
+            f->image_id = image_group(GROUP_FIGURE_CARTPUSHER) + figure_image_corpse_offset(f) + 96;
+            f->cart_image_id = 0;
         } else {
-            f->image_id = assets_get_image_id("Walkers", "Slave NE 01") +
-                dir * 12 + f->image_offset;
+            f->image_id = image_group(GROUP_FIGURE_CARTPUSHER) + dir + 8 * f->image_offset;
+        }
+        if (f->cart_image_id) {
+            f->cart_image_id += dir;
+            figure_image_set_cart_offset(f, dir);
         }
     } else if (f->type == FIGURE_CARAVANSERAI_SUPPLIER) {
         int dir = figure_image_normalize_direction(f->direction < 8 ? f->direction : f->previous_tile_direction);
