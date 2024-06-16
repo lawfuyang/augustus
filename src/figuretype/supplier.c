@@ -298,12 +298,13 @@ void figure_supplier_action(figure *f)
         switch (f->action_state) {
             case FIGURE_ACTION_150_ATTACK:
                 if (f->attack_image_offset < 14) {
-                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 5;
+                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 6;
                 } else {
-                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 5 + ((f->attack_image_offset - 14) / 2);
+                    f->image_id = assets_get_image_id("Walkers", "quartermaster_f_ne_01") + dir * 6 + ((f->attack_image_offset - 14) / 2);
                 }
+                break;
             case FIGURE_ACTION_149_CORPSE:
-                f->image_id = f->image_id = assets_get_image_id("Walkers", "quartermaster_death_01") +
+                f->image_id = assets_get_image_id("Walkers", "quartermaster_death_01") +
                     figure_image_corpse_offset(f);
                 break;
             default:
