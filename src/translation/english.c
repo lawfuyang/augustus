@@ -180,7 +180,7 @@ static translation_string all_strings[] = {
     {TR_HOTKEY_EDITOR_TOGGLE_BATTLE_INFO, "Toggle battle info"},
     {TR_HOTKEY_EDIT_TITLE, "Press new hotkey"},
     {TR_BUILDING_ROADBLOCK, "Roadblock"},
-    {TR_BUILDING_ROADBLOCK_DESC, "Roadblock stops loitering citizens."},
+    {TR_BUILDING_ROADBLOCK_DESC, "Roadblocks stop loitering citizens from entering certain areas of your city."},
     {TR_BUILDING_ARCHITECT_GUILD, "Architects' guild" },
     {TR_BUILDING_ARCHITECT_GUILD_DESC, "Architects here work tirelessly to construct monuments for the glory of Rome." },
     {TR_BUILDING_GRAND_TEMPLE_ADD_MODULE, "Bestow epithet on temple" },
@@ -546,7 +546,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_HIPPODROME_PHASE_3_TEXT, "Masons are carving stone seating that will one day accommodate tens of thousands of racing fans." },
     {TR_BUILDING_HIPPODROME_PHASE_4_TEXT, "More than a mere racetrack, artisans are crafting a monument worthy of the gods and people of Rome." },
     {TR_BUILDING_MONUMENT_CONSTRUCTION_DESC, "Construction of this monumental building will require resources stored in a warehouse, laborers from a work camp, and architects from an architects' guild." },
-    {TR_BUILDING_MONUMENT_CONSTRUCTION_HALTED, "Construction halted." },
+    {TR_BUILDING_MONUMENT_CONSTRUCTION_HALTED, "Construction is halted." },
     {TR_WINDOW_ADVISOR_ENTERTAINMENT_ARENA_COVERAGE, "Arena" },
     {TR_WINDOW_ADVISOR_ENTERTAINMENT_ARENA_COVERAGE_PLURAL, "Arenas" },
     {TR_BUILDING_INFO_TOURISM, "(travelers)" },
@@ -665,6 +665,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_BOTH_MAUSOLEUM_DESC, "This mausoleum pleases all the gods, though it is not desirable to nearby houses. Such burial places improve sanitary conditions in the city, raising the overall health of your citizens." },
     {TR_FIGURE_TYPE_WATCHMAN, "Watchman" },
     {TR_BUILDING_MARS_TEMPLE_MODULE_DESC_NO_MESS, "This temple will collect food for your supply post, once one is constructed." },
+    {TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION, "Walker permissions" },
     {TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION_MAINTENANCE, "Toggle prefects and engineers access" },
     {TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION_PRIEST, "Toggle priests access" },
     {TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION_MARKET, "Toggle market supplier access" },
@@ -1132,6 +1133,7 @@ static translation_string all_strings[] = {
     {TR_PARAMETER_TYPE_TARGET_TYPE, "Target type"},
     {TR_PARAMETER_TYPE_ENEMY_TYPE, "Enemy type"},
     {TR_PARAMETER_TYPE_GOD, "God" },
+    {TR_PARAMETER_TYPE_CLIMATE, "Climate" },
     {TR_CONDITION_TYPE_TIME_PASSED, "Time passed"},
     {TR_CONDITION_TYPE_DIFFICULTY, "Difficulty"},
     {TR_CONDITION_TYPE_MONEY, "City money"},
@@ -1188,6 +1190,7 @@ static translation_string all_strings[] = {
     {TR_ACTION_TYPE_CAUSE_BLESSING, "Cause a blessing" },
     {TR_ACTION_TYPE_CAUSE_MINOR_CURSE, "Cause a minor curse" },
     {TR_ACTION_TYPE_CAUSE_MAJOR_CURSE, "Cause a major curse" },
+    {TR_ACTION_TYPE_CHANGE_CLIMATE, "Change climate" },
     {TR_PARAMETER_VALUE_COMPARISON_TYPE_EQUAL, "Equal"},
     {TR_PARAMETER_VALUE_COMPARISON_TYPE_EQUAL_OR_LESS, "Less than or equal"},
     {TR_PARAMETER_VALUE_COMPARISON_TYPE_EQUAL_OR_MORE, "Greater than or equal"},
@@ -1328,6 +1331,9 @@ static translation_string all_strings[] = {
     {TR_PARAMETER_VALUE_GOD_MERCURY, "Mercury"},
     {TR_PARAMETER_VALUE_GOD_NEPTUNE, "Neptune"},
     {TR_PARAMETER_VALUE_GOD_VENUS, "Venus"},
+    {TR_PARAMETER_VALUE_CLIMATE_CENTRAL, "Central" },
+    {TR_PARAMETER_VALUE_CLIMATE_NORTHERN, "Northern" },
+    {TR_PARAMETER_VALUE_CLIMATE_DESERT, "Desert" },
     {TR_PARAMETER_DISPLAY_SET_TO, "set to"},
     {TR_PARAMETER_DISPLAY_ADD_TO, "add"},
     {TR_PARAMETER_DISPLAY_BETWEEN, "between"},
@@ -1503,8 +1509,8 @@ static translation_string all_strings[] = {
     {TR_USER_DIRECTORIES_USER_PATH_CHANGED_TITLE, "User path changed"},
     {TR_USER_DIRECTORIES_USER_PATH_CHANGED_TEXT, "The user path was successfully changed.\nDo you want to copy over your files?"},
     {TR_USER_DIRECTORIES_USER_PATH_CHANGED_OVERWRITE, "Overwrite existing files"},
-    {TR_FIGURE_TYPE_ARMORY_CARTPUSHER, "Armory deliveryman"}
-
+    {TR_FIGURE_TYPE_ARMORY_CARTPUSHER, "Armory deliveryman"},
+    {TR_TOOLTIP_BUTTON_CAN_GO_TO_ADVISORS, "Display the relevant advisor for this building." },
 };
 
 void translation_english(const translation_string **strings, int *num_strings)

@@ -76,6 +76,7 @@ typedef enum {
 
 void window_building_draw_engineers_post(building_info_context *c)
 {
+    c->can_go_to_chief_advisor = 1;
     c->help_id = 81;
     window_building_play_sound(c, "wavs/eng_post.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
@@ -113,6 +114,7 @@ void window_building_draw_engineers_post(building_info_context *c)
 
 void window_building_draw_prefect(building_info_context *c)
 {
+    c->can_go_to_chief_advisor = 1;
     c->help_id = 86;
     window_building_play_sound(c, "wavs/prefecture.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
@@ -181,8 +183,8 @@ void window_building_draw_roadblock_button(building_info_context *c)
 {
     button_border_draw(c->x_offset + 80, c->y_offset + BLOCK_SIZE * c->height_blocks - 34,
         BLOCK_SIZE * (c->width_blocks - 10), 20, data.focus_button_id == 1 ? 1 : 0);
-    lang_text_draw_centered(98, 5, c->x_offset + 80, c->y_offset + BLOCK_SIZE * c->height_blocks - 30,
-        BLOCK_SIZE * (c->width_blocks - 10), FONT_NORMAL_BLACK);
+    text_draw_centered(translation_for(TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION), c->x_offset + 80, c->y_offset + BLOCK_SIZE * c->height_blocks - 30,
+        BLOCK_SIZE * (c->width_blocks - 10), FONT_NORMAL_BLACK, 0);
 }
 
 void window_building_draw_roadblock_orders(building_info_context *c)
@@ -190,7 +192,7 @@ void window_building_draw_roadblock_orders(building_info_context *c)
     c->help_id = 3;
     int y_offset = window_building_get_vertical_offset(c, 28);
     outer_panel_draw(c->x_offset, y_offset, 29, 28);
-    text_draw_centered(translation_for(TR_BUILDING_ROADBLOCK), c->x_offset, y_offset + 10, 16 * c->width_blocks, FONT_LARGE_BLACK, 0);
+    text_draw_centered(translation_for(TR_TOOLTIP_BUTTON_ROADBLOCK_PERMISSION), c->x_offset, y_offset + 10, 16 * c->width_blocks, FONT_LARGE_BLACK, 0);
     inner_panel_draw(c->x_offset + 16, y_offset + 42, c->width_blocks - 2, 21);
 }
 
@@ -316,6 +318,7 @@ void window_building_draw_fountain(building_info_context *c)
     }
     window_building_draw_description(c, 108, text_id);
     inner_panel_draw(c->x_offset + 16, c->y_offset + 166, c->width_blocks - 2, 4);
+    window_building_draw_risks(c, c->x_offset + c->width_blocks * BLOCK_SIZE - 76, c->y_offset + 174);
     window_building_draw_employment_without_house_cover(c, 172);
 }
 
@@ -337,10 +340,13 @@ void window_building_draw_well(building_info_context *c)
     if (text_id) {
         window_building_draw_description_at(c, BLOCK_SIZE * c->height_blocks - 160, 109, text_id);
     }
+    inner_panel_draw(c->x_offset + 16, c->y_offset + 116, c->width_blocks - 2, 4);
+    window_building_draw_risks(c, c->x_offset + c->width_blocks * BLOCK_SIZE - 76, c->y_offset + 124);
 }
 
 void window_building_draw_mission_post(building_info_context *c)
 {
+    c->can_go_to_education_advisor = 1;
     c->help_id = 8;
     window_building_play_sound(c, "wavs/mission.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);

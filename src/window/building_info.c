@@ -56,12 +56,60 @@ static void button_mothball(int mothball, int param2);
 static void button_monument_construction(int param1, int param2);
 
 static image_button image_buttons_help_close[] = {
-    {14, 0, 27, 27, IB_NORMAL, GROUP_CONTEXT_ICONS, 0, button_help, button_none, 0, 0, 1},
+    {14, 3, 27, 27, IB_NORMAL, GROUP_CONTEXT_ICONS, 0, button_help, button_none, 0, 0, 1},
     {424, 3, 24, 24, IB_NORMAL, GROUP_CONTEXT_ICONS, 4, button_close, button_none, 0, 0, 1}
 };
 
-static image_button image_buttons_advisor[] = {
-    {350, -38, 28, 28, IB_NORMAL, GROUP_MESSAGE_ADVISOR_BUTTONS, 9, button_advisor, button_none, ADVISOR_RATINGS, 0, 1}
+static image_button image_buttons_labor_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_LABOR, 0, 1, "UI", "Advisor_Building_Window_Labor_1"}
+};
+
+static image_button image_buttons_military_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_MILITARY, 0, 1, "UI", "Advisor_Building_Window_Military_1"}
+};
+
+static image_button image_buttons_imperial_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_IMPERIAL, 0, 1, "UI", "Advisor_Building_Window_Imperial_1"}
+};
+
+static image_button image_buttons_ratings_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_RATINGS, 0, 1, "UI", "Advisor_Building_Window_Ratings_1"}
+};
+
+static image_button image_buttons_trade_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_TRADE, 0, 1, "UI", "Advisor_Building_Window_Trade_1"}
+};
+
+static image_button image_buttons_population_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_POPULATION, 0, 1, "UI", "Advisor_Building_Window_Population_1"}
+};
+
+static image_button image_buttons_housing_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_HOUSING, 0, 1, "UI", "Advisor_Building_Window_Housing_1"}
+};
+
+static image_button image_buttons_health_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_HEALTH, 0, 1, "UI", "Advisor_Building_Window_Health_1"}
+};
+
+static image_button image_buttons_education_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_EDUCATION, 0, 1, "UI", "Advisor_Building_Window_Education_1"}
+};
+
+static image_button image_buttons_entertainment_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_ENTERTAINMENT, 0, 1, "UI", "Advisor_Building_Window_Entertainment_1"}
+};
+
+static image_button image_buttons_religion_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_RELIGION, 0, 1, "UI", "Advisor_Building_Window_Religion_1"}
+};
+
+static image_button image_buttons_financial_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_FINANCIAL, 0, 1, "UI", "Advisor_Building_Window_Financial_1"}
+};
+
+static image_button image_buttons_chief_advisor[] = {
+    {350, -38, 28, 28, IB_NORMAL, 0, 0, button_advisor, button_none, ADVISOR_CHIEF, 0, 1, "UI", "Advisor_Building_Window_Chief_1"}
 };
 
 static image_button image_button_mothball[] = {
@@ -110,11 +158,6 @@ static int get_height_id(void)
         }
 
         switch (b->type) {
-            case BUILDING_SMALL_TEMPLE_CERES:
-            case BUILDING_SMALL_TEMPLE_NEPTUNE:
-            case BUILDING_SMALL_TEMPLE_MERCURY:
-            case BUILDING_SMALL_TEMPLE_MARS:
-            case BUILDING_SMALL_TEMPLE_VENUS:
             case BUILDING_SMALL_STATUE:
             case BUILDING_MEDIUM_STATUE:
             case BUILDING_LARGE_STATUE:
@@ -135,7 +178,6 @@ static int get_height_id(void)
             case BUILDING_ENGINEERS_POST:
             case BUILDING_GATEHOUSE:
             case BUILDING_TOWER:
-            case BUILDING_FORT:
             case BUILDING_MILITARY_ACADEMY:
             case BUILDING_MARKET:
             case BUILDING_SHIPYARD:
@@ -144,33 +186,20 @@ static int get_height_id(void)
             case BUILDING_GOVERNORS_VILLA:
             case BUILDING_GOVERNORS_PALACE:
             case BUILDING_FORUM:
-            case BUILDING_ROADBLOCK:
             case BUILDING_FORUM_2_UNUSED:
             case BUILDING_WORKCAMP:
             case BUILDING_ARCHITECT_GUILD:
             case BUILDING_OBELISK:
             case BUILDING_HEDGE_DARK:
             case BUILDING_HEDGE_LIGHT:
-            case BUILDING_LARARIUM:
             case BUILDING_COLONNADE:
             case BUILDING_GARDEN_PATH:
             case BUILDING_WATCHTOWER:
             case BUILDING_LOOPED_GARDEN_WALL:
             case BUILDING_ROOFED_GARDEN_WALL:
-            case BUILDING_ROOFED_GARDEN_WALL_GATE:
-            case BUILDING_PANELLED_GARDEN_GATE:
             case BUILDING_PANELLED_GARDEN_WALL:
-            case BUILDING_LOOPED_GARDEN_GATE:
             case BUILDING_PALISADE:
-            case BUILDING_HEDGE_GATE_DARK:
-            case BUILDING_HEDGE_GATE_LIGHT:
-            case BUILDING_PALISADE_GATE:
             case BUILDING_GLADIATOR_STATUE:
-            case BUILDING_SHRINE_CERES:
-            case BUILDING_SHRINE_NEPTUNE:
-            case BUILDING_SHRINE_MERCURY:
-            case BUILDING_SHRINE_MARS:
-            case BUILDING_SHRINE_VENUS:
                 return 1;
 
             case BUILDING_SENATE_1_UNUSED:
@@ -182,6 +211,13 @@ static int get_height_id(void)
                 return 3;
 
             case BUILDING_WELL:
+            case BUILDING_ROADBLOCK:
+            case BUILDING_HEDGE_GATE_DARK:
+            case BUILDING_HEDGE_GATE_LIGHT:
+            case BUILDING_PALISADE_GATE:
+            case BUILDING_LOOPED_GARDEN_GATE:
+            case BUILDING_ROOFED_GARDEN_WALL_GATE:
+            case BUILDING_PANELLED_GARDEN_GATE:
                 return 4;
 
             case BUILDING_TAVERN:
@@ -197,6 +233,7 @@ static int get_height_id(void)
             case BUILDING_LARGE_TEMPLE_VENUS:
             case BUILDING_SMALL_MAUSOLEUM:
             case BUILDING_LARGE_MAUSOLEUM:
+            case BUILDING_TRIUMPHAL_ARCH:
                 return 5;
 
             case BUILDING_DOCK:
@@ -220,6 +257,24 @@ static int get_height_id(void)
 
             case BUILDING_GRAND_TEMPLE_MARS:
                 return 10;
+
+            case BUILDING_FORT:
+                return 11;
+
+            case BUILDING_SHRINE_CERES:
+            case BUILDING_SHRINE_NEPTUNE:
+            case BUILDING_SHRINE_MERCURY:
+            case BUILDING_SHRINE_MARS:
+            case BUILDING_SHRINE_VENUS:
+            case BUILDING_SMALL_TEMPLE_CERES:
+            case BUILDING_SMALL_TEMPLE_NEPTUNE:
+            case BUILDING_SMALL_TEMPLE_MERCURY:
+            case BUILDING_SMALL_TEMPLE_MARS:
+            case BUILDING_SMALL_TEMPLE_VENUS:
+                return 12;
+
+            case BUILDING_LARARIUM:
+                return 13;
 
             default:
                 return 0;
@@ -270,7 +325,17 @@ static void init(int grid_offset)
     context.depot_selection.destination = 0;
     context.depot_selection.source = 0;
     context.depot_selection.resource = 0;
-    context.can_go_to_advisor = 0;
+    context.can_go_to_military_advisor = 0;
+    context.can_go_to_ratings_advisor = 0;
+    context.can_go_to_trade_advisor = 0;
+    context.can_go_to_population_advisor = 0;
+    context.can_go_to_housing_advisor = 0;
+    context.can_go_to_health_advisor = 0;
+    context.can_go_to_education_advisor = 0;
+    context.can_go_to_entertainment_advisor = 0;
+    context.can_go_to_religion_advisor = 0;
+    context.can_go_to_financial_advisor = 0;
+    context.can_go_to_chief_advisor = 0;
     context.building_id = map_building_at(grid_offset);
     context.rubble_building_type = map_rubble_building_type(grid_offset);
     context.has_reservoir_pipes = map_terrain_is(grid_offset, TERRAIN_RESERVOIR_RANGE);
@@ -453,8 +518,11 @@ static void init(int grid_offset)
         case 5: context.height_blocks = 24; break;
         case 6: context.height_blocks = 38; break;
         case 7: context.height_blocks = 26; break;
-        case 8: context.height_blocks = 40; context.width_blocks = 30; break;
-        case 10: context.height_blocks = 47; context.width_blocks = 30; break;
+        case 8: context.height_blocks = 40; break;
+        case 10: context.height_blocks = 47; break;
+        case 11: context.height_blocks = 28; break;
+        case 12: context.height_blocks = 17; break;
+        case 13: context.height_blocks = 15; break;
         default: context.height_blocks = 22; break;
     }
     if (screen_height() <= 600) {
@@ -738,9 +806,16 @@ static void draw_background(void)
             window_building_draw_palisade(&context);
         } else if (btype == BUILDING_PALISADE_GATE) {
             window_building_draw_palisade_gate(&context);
-        } else if (btype == BUILDING_SHRINE_CERES || btype == BUILDING_SHRINE_MARS || btype == BUILDING_SHRINE_MERCURY ||
-            btype == BUILDING_SHRINE_NEPTUNE || btype == BUILDING_SHRINE_VENUS) {
-            window_building_draw_shrine(&context);
+        } else if (btype == BUILDING_SHRINE_CERES) {
+            window_building_draw_shrine_ceres(&context);
+        } else if (btype == BUILDING_SHRINE_NEPTUNE) {
+            window_building_draw_shrine_neptune(&context);
+        } else if (btype == BUILDING_SHRINE_MERCURY) {
+            window_building_draw_shrine_mercury(&context);
+        } else if (btype == BUILDING_SHRINE_MARS) {
+            window_building_draw_shrine_mars(&context);
+        } else if (btype == BUILDING_SHRINE_VENUS) {
+            window_building_draw_shrine_venus(&context);
         } else if (btype == BUILDING_ARMOURY) {
             window_building_draw_armoury(&context);
         }
@@ -868,9 +943,49 @@ static void draw_foreground(void)
         image_buttons_draw(context.x_offset, context.y_offset + BLOCK_SIZE * context.height_blocks - 40,
             image_buttons_help_close, 2);
     }
-    if (context.can_go_to_advisor) {
-        image_buttons_draw(context.x_offset, context.y_offset + BLOCK_SIZE * context.height_blocks - 40,
-            image_buttons_advisor, 1);
+    if (context.can_go_to_military_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_military_advisor, 1);
+    }
+    if (context.can_go_to_ratings_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_ratings_advisor, 1);
+    }
+    if (context.can_go_to_trade_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_trade_advisor, 1);
+    }
+    if (context.can_go_to_population_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_population_advisor, 1);
+    }
+    if (context.can_go_to_housing_advisor) {
+        image_buttons_draw(context.x_offset - 288, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_housing_advisor, 1);
+    }
+    if (context.can_go_to_health_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_health_advisor, 1);
+    }
+    if (context.can_go_to_education_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_education_advisor, 1);
+    }
+    if (context.can_go_to_entertainment_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_entertainment_advisor, 1);
+    }
+    if (context.can_go_to_religion_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_religion_advisor, 1);
+    }
+    if (context.can_go_to_financial_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_financial_advisor, 1);
+    }
+    if (context.can_go_to_chief_advisor) {
+        image_buttons_draw(context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_chief_advisor, 1);
     }
     if (!context.show_special_orders &&
         !context.depot_selection.source &&
@@ -1005,10 +1120,60 @@ static void handle_input(const mouse *m, const hotkeys *h)
             }
         }
     }
-    if (context.can_go_to_advisor) {
+    if (context.can_go_to_military_advisor) {
         handled |= image_buttons_handle_mouse(
-            m, context.x_offset, context.y_offset + BLOCK_SIZE * context.height_blocks - 40,
-            image_buttons_advisor, 1, 0);
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_military_advisor, 1, 0);
+    }
+    if (context.can_go_to_ratings_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_ratings_advisor, 1, 0);
+    }
+    if (context.can_go_to_trade_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_trade_advisor, 1, 0);
+    }
+    if (context.can_go_to_population_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_population_advisor, 1, 0);
+    }
+    if (context.can_go_to_housing_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 288, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_housing_advisor, 1, 0);
+    }
+    if (context.can_go_to_health_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_health_advisor, 1, 0);
+    }
+    if (context.can_go_to_education_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_education_advisor, 1, 0);
+    }
+    if (context.can_go_to_entertainment_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_entertainment_advisor, 1, 0);
+    }
+    if (context.can_go_to_religion_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_religion_advisor, 1, 0);
+    }
+    if (context.can_go_to_financial_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_financial_advisor, 1, 0);
+    }
+    if (context.can_go_to_chief_advisor) {
+        handled |= image_buttons_handle_mouse(
+            m, context.x_offset - 312, context.y_offset + BLOCK_SIZE * context.height_blocks + 1,
+            image_buttons_chief_advisor, 1, 0);
     }
 
     if (!handled) {

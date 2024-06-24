@@ -130,6 +130,7 @@ void window_building_draw_gatehouse(building_info_context *c)
 
 void window_building_draw_tower(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 85;
     window_building_play_sound(c, "wavs/tower.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
@@ -152,6 +153,7 @@ void window_building_draw_tower(building_info_context *c)
 
 void window_building_draw_barracks(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 37;
     data.building_id = c->building_id;
     window_building_play_sound(c, "wavs/barracks.wav");
@@ -240,21 +242,25 @@ int window_building_handle_mouse_barracks(const mouse *m, building_info_context 
 
 int window_building_handle_mouse_grand_temple_mars(const mouse *m, building_info_context *c)
 {
+    unsigned int focused_button = data.focus_priority_button_id;
     if (generic_buttons_handle_mouse(m, c->x_offset + 50, c->y_offset + 135,
         priority_buttons, 7, &data.focus_priority_button_id) ||
-        generic_buttons_handle_mouse(m, c->x_offset + 408, c->y_offset + 40,
-        delivery_buttons, 1, &data.focus_delivery_button_id)
+        generic_buttons_handle_mouse(m, c->x_offset + 392, c->y_offset + 40,
+            delivery_buttons, 1, &data.focus_delivery_button_id)
         ) {
         window_invalidate();
         return 1;
     }
-
+    if (focused_button != data.focus_priority_button_id) {
+        window_invalidate();
+    }
     window_building_handle_mouse_grand_temple(m, c);
     return 0;
 }
 
 void window_building_draw_military_academy(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 88;
     window_building_play_sound(c, "wavs/mil_acad.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
@@ -277,18 +283,24 @@ void window_building_draw_military_academy(building_info_context *c)
 
 void window_building_draw_fort(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 87;
     window_building_play_sound(c, "wavs/fort.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
     lang_text_draw_centered(89, 0, c->x_offset, c->y_offset + 10, BLOCK_SIZE * c->width_blocks, FONT_LARGE_BLACK);
     int text_id = formation_get(c->formation_id)->cursed_by_mars ? 1 : 2;
-    window_building_draw_description_at(c, BLOCK_SIZE * c->height_blocks - 208, 89, text_id);
+    window_building_draw_description_at(c, BLOCK_SIZE * c->height_blocks - 388, 89, text_id);
 
     building *b = building_get(c->building_id);
-    inner_panel_draw(c->x_offset + 16, c->y_offset + 136, c->width_blocks - 2, 4);
+    inner_panel_draw(c->x_offset + 16, c->y_offset + 116, c->width_blocks - 2, 4);
+    window_building_draw_risks(c, c->x_offset + c->width_blocks * BLOCK_SIZE - 76, c->y_offset + 122);
     if (building_get_levy(b)) {
-        window_building_draw_levy(building_get_levy(b), c->x_offset + 300, c->y_offset + 150);
+        window_building_draw_levy(building_get_levy(b), c->x_offset + 56, c->y_offset + 130);
     }
+    image_draw(assets_get_image_id("UI", "Fort_Banner_01"),
+        c->x_offset + 37, c->y_offset + 195, COLOR_MASK_NONE, SCALE_NONE);
+    image_draw_border(assets_get_image_id("UI", "Large_Banner_Border"),
+        c->x_offset + 32, c->y_offset + 190 , COLOR_MASK_NONE);
 }
 
 void window_building_draw_legion_info(building_info_context *c)
@@ -699,6 +711,7 @@ static void button_delivery(int index, int param2)
 
 void window_building_draw_watchtower(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 85;
     window_building_play_sound(c, "wavs/tower2.wav");
     outer_panel_draw(c->x_offset, c->y_offset, c->width_blocks, c->height_blocks);
@@ -733,6 +746,7 @@ void window_building_draw_palisade(building_info_context *c)
 
 void window_building_draw_armoury(building_info_context *c)
 {
+    c->can_go_to_military_advisor = 1;
     c->help_id = 85;
     building *b = building_get(c->building_id);
 
