@@ -1511,6 +1511,8 @@ static translation_string all_strings[] = {
     {TR_USER_DIRECTORIES_USER_PATH_CHANGED_OVERWRITE, "Overwrite existing files"},
     {TR_FIGURE_TYPE_ARMORY_CARTPUSHER, "Armory deliveryman"},
     {TR_TOOLTIP_BUTTON_CAN_GO_TO_ADVISORS, "Display the relevant advisor for this building." },
+    {TR_FIGURE_ENEMY_CATAPULT, "Catapult"},
+    {TR_TOOLTIP_BUTTON_DELETE_COMMON_MESSAGES, "Delete common messages"}
 };
 
 void translation_english(const translation_string **strings, int *num_strings)

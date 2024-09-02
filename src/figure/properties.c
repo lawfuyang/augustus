@@ -383,7 +383,7 @@ static const figure_properties properties[FIGURE_TYPE_MAX] = {
     },
     [FIGURE_MESS_HALL_SUPPLIER] = {
     .category = FIGURE_CATEGORY_ARMED,
-    .max_damage = 70, .attack_value = 8, .defense_value = 0,
+    .max_damage = 70, .attack_value = 8, .defense_value = 1,
     .missile_defense_value = 0, .missile_attack_value = 0, .missile_delay = 0
     },
     [FIGURE_MESS_HALL_COLLECTOR] = {
@@ -463,7 +463,7 @@ static const figure_properties properties[FIGURE_TYPE_MAX] = {
     },
     [FIGURE_FORT_INFANTRY] = {
     .category = FIGURE_CATEGORY_ARMED,
-    .max_damage = 110, .attack_value = 8, .defense_value = 0,
+    .max_damage = 110, .attack_value = 8, .defense_value = 1,
     .missile_defense_value = 2, .missile_attack_value = 0, .missile_delay = 0
     },
     [FIGURE_BEGGAR] = {
@@ -475,6 +475,16 @@ static const figure_properties properties[FIGURE_TYPE_MAX] = {
     .category = FIGURE_CATEGORY_ARMED,
     .max_damage = 80, .attack_value = 6, .defense_value = 0,
     .missile_defense_value = 0, .missile_attack_value = 4, .missile_delay = 50
+    },
+    [FIGURE_ENEMY_CATAPULT] = {
+    .category = FIGURE_CATEGORY_HOSTILE,
+    .max_damage = 200, .attack_value = 1, .defense_value = 0,
+    .missile_defense_value = 20, .missile_attack_value = 100, .missile_delay = 200
+    },
+    [FIGURE_CATAPULT_MISSILE] = {
+    .category = FIGURE_CATEGORY_INACTIVE,
+    .max_damage = 100, .attack_value = 0, .defense_value = 0,
+    .missile_defense_value = 0, .missile_attack_value = 200, .missile_delay = 0
     },
 
 };
