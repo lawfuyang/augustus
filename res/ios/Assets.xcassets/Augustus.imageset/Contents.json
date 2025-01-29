@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "julius_256.png",
+      "filename" : "augustus_256.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "julius_512.png",
+      "filename" : "augustus_512.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
