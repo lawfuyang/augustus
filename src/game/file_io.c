@@ -696,6 +696,9 @@ static void scenario_load_from_state(scenario_state *file, scenario_version_t ve
     }
     if (version > SCENARIO_LAST_UNVERSIONED) {
         empire_object_load(file->empire, version);
+        if (resource_mapping_get_version() < RESOURCE_SEPARATE_FISH_AND_MEAT_VERSION) {
+            empire_city_update_our_fish_and_meat_production();
+        }
         empire_city_update_trading_data(scenario_empire_id());
     }
     empire_reset_map();
@@ -825,7 +828,7 @@ static void savegame_load_from_state(savegame_state *state, savegame_version_t v
     city_message_load_state(state->messages, state->message_extra,
         state->message_counts, state->message_delays,
         state->population_messages);
-    sound_city_load_state(state->city_sounds);
+    sound_city_init();
     traders_load_state(state->figure_traders);
 
     building_list_load_state(state->building_list_small, state->building_list_large,
@@ -855,6 +858,9 @@ static void savegame_load_from_state(savegame_state *state, savegame_version_t v
     }
     if (version > SAVE_GAME_LAST_UNVERSIONED_SCENARIOS) {
         empire_object_load(state->custom_empire, scenario_version);
+        if (resource_mapping_get_version() < RESOURCE_SEPARATE_FISH_AND_MEAT_VERSION) {
+            empire_city_update_our_fish_and_meat_production();
+        }
         empire_city_update_trading_data(scenario_empire_id());
     }
     if (version <= SAVE_GAME_LAST_GLOBAL_BUILDING_INFO) {
@@ -930,7 +936,6 @@ static void savegame_save_to_state(savegame_state *state)
     city_message_save_state(state->messages, state->message_extra,
         state->message_counts, state->message_delays,
         state->population_messages);
-    sound_city_save_state(state->city_sounds);
     traders_save_state(state->figure_traders);
 
     building_list_save_state(state->building_list_small, state->building_list_large,

@@ -130,8 +130,8 @@ static void bound_request_values(void)
     } else {
         data.repeat_type = REQUEST_REPEAT_TIMES;
     }
-    if (data.request.repeat.interval.min < 3) {
-        data.request.repeat.interval.min = 3;
+    if (data.request.repeat.interval.min < 1) {
+        data.request.repeat.interval.min = 1;
     }
     if (data.request.repeat.interval.max > 50) {
         data.request.repeat.interval.max = 50;
@@ -503,7 +503,7 @@ static void button_repeat_between(const generic_button *button)
     }
 
     window_numeric_input_bound_show(data.section_title_width + SECTION_CONTENT_LEFT_OFFSET, BASE_Y_OFFSET, button,
-        2, 3, 50, amount_type == AMOUNT_MIN ? set_repeat_interval_min : set_repeat_interval_max);
+        2, 1, 50, amount_type == AMOUNT_MIN ? set_repeat_interval_min : set_repeat_interval_max);
 }
 
 static void button_delete(const generic_button *button)
