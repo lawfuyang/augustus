@@ -73,12 +73,12 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_HOUSE_SMALL_HOVEL] = {
         .size = 1,
-        .sound_id = SOUND_CITY_HOUSE_SLUM,
+        .sound_id = SOUND_CITY_HOUSE_POOR,
         .event_data.attr = "house_small_hovel"
     },
     [BUILDING_HOUSE_LARGE_HOVEL] = {
         .size = 1,
-        .sound_id = SOUND_CITY_HOUSE_SLUM,
+        .sound_id = SOUND_CITY_HOUSE_POOR,
         .event_data.attr = "house_large_hovel"
     },
     [BUILDING_HOUSE_SMALL_CASA] = {
@@ -93,12 +93,12 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_HOUSE_SMALL_INSULA] = {
         .size = 1,
-        .sound_id = SOUND_CITY_HOUSE_POOR,
+        .sound_id = SOUND_CITY_HOUSE_MEDIUM,
         .event_data.attr = "house_small_insula"
     },
     [BUILDING_HOUSE_MEDIUM_INSULA] = {
         .size = 1,
-        .sound_id = SOUND_CITY_HOUSE_POOR,
+        .sound_id = SOUND_CITY_HOUSE_MEDIUM,
         .event_data.attr = "house_medium_insula"
     },
     [BUILDING_HOUSE_LARGE_INSULA] = {
@@ -113,12 +113,12 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_HOUSE_SMALL_VILLA] = {
         .size = 2,
-        .sound_id = SOUND_CITY_HOUSE_MEDIUM,
+        .sound_id = SOUND_CITY_HOUSE_GOOD,
         .event_data.attr = "house_small_villa"
     },
     [BUILDING_HOUSE_MEDIUM_VILLA] = {
         .size = 2,
-        .sound_id = SOUND_CITY_HOUSE_MEDIUM,
+        .sound_id = SOUND_CITY_HOUSE_GOOD,
         .event_data.attr = "house_medium_villa"
     },
     [BUILDING_HOUSE_LARGE_VILLA] = {
@@ -133,12 +133,12 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_HOUSE_SMALL_PALACE] = {
         .size = 3,
-        .sound_id = SOUND_CITY_HOUSE_GOOD,
+        .sound_id = SOUND_CITY_HOUSE_POSH,
         .event_data.attr = "house_small_palace"
     },
     [BUILDING_HOUSE_MEDIUM_PALACE] = {
         .size = 3,
-        .sound_id = SOUND_CITY_HOUSE_GOOD,
+        .sound_id = SOUND_CITY_HOUSE_POSH,
         .event_data.attr = "house_medium_palace"
     },
     [BUILDING_HOUSE_LARGE_PALACE] = {
@@ -523,6 +523,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
         .size = 1,
         .fire_proof = 1,
         .image_group = 183,
+        .sound_id = SOUND_CITY_NATIVE_HUT,
         .event_data.attr = "native_hut"
     },
     [BUILDING_NATIVE_MEETING] = {
@@ -530,6 +531,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
         .fire_proof = 1,
         .image_group = 183,
         .image_offset = 2,
+        .sound_id = SOUND_CITY_NATIVE_HUT,
         .event_data.attr = "native_meeting"
     },
     [BUILDING_RESERVOIR] = {
@@ -558,6 +560,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
         .fire_proof = 1,
         .image_group = 100,
         .event_data.attr = "native_crops",
+        .sound_id = SOUND_CITY_WHEAT_FARM,
         .event_data.key = TR_PARAMETER_VALUE_BUILDING_NATIVE_CROPS
     },
     [BUILDING_MILITARY_ACADEMY] = {
@@ -569,6 +572,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     [BUILDING_BARRACKS] = {
         .size = 3,
         .image_group = 166,
+        .sound_id = SOUND_CITY_BARRACKS,
         .event_data.attr = "barracks"
     },
     [BUILDING_MENU_SMALL_TEMPLES] = {
@@ -1064,6 +1068,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     [BUILDING_NYMPHAEUM] = {
         .size = 3,
         .fire_proof = 1,
+        .sound_id = SOUND_CITY_ORACLE,
         .custom_asset.group = "Monuments",
         .custom_asset.id = "Nymphaeum OFF",
         .event_data.attr = "nymphaeum"
@@ -1071,6 +1076,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     [BUILDING_SMALL_MAUSOLEUM] = {
         .size = 2,
         .fire_proof = 1,
+        .sound_id = SOUND_CITY_ORACLE,
         .rotation_offset = 1,
         .custom_asset.group = "Monuments",
         .custom_asset.id = "Mausoleum S",
@@ -1079,6 +1085,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     [BUILDING_LARGE_MAUSOLEUM] = {
         .size = 3,
         .fire_proof = 1,
+        .sound_id = SOUND_CITY_ORACLE,
         .custom_asset.group = "Monuments",
         .custom_asset.id = "Mausoleum L",
         .event_data.attr = "large_mausoleum"
@@ -1279,6 +1286,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_ARMOURY] = {
         .size = 2,
+        .sound_id = SOUND_CITY_ARMOURY,
         .custom_asset.group = "Military",
         .custom_asset.id = "Armoury_OFF_C",
         .event_data.attr = "armoury"
