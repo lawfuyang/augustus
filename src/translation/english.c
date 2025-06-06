@@ -49,6 +49,7 @@ static translation_string all_strings[] = {
     {TR_CONFIG_VOLUME, "Volume"},
     {TR_CONFIG_ENABLE_AUDIO, "Enable audio"},
     {TR_CONFIG_MUSIC, "Enable music"},
+    {TR_CONFIG_RANDOMISE_MUSIC, "Randomise city music"},
     {TR_CONFIG_SPEECH, "Enable speech"},
     {TR_CONFIG_EFFECTS, "Enable sound effects"},
     {TR_CONFIG_CITY_SOUNDS, "Enable city sounds"},
@@ -1600,6 +1601,7 @@ static translation_string all_strings[] = {
     {TR_BUILDING_LATRINES_MISSING_EVOLVE, "This house cannot evolve, as it does not have access to a latrine or a clean water supply from a fountain."},
     {TR_BUILDING_LATRINES_MISSING_DEVOLVE, "This house will devolve soon, as it does not have access to a latrine or a clean water from a fountain."},
     {TR_BUILDING_LATRINES_NO_WORKERS, "Without employees to maintain the latrines, citizens avoid coming to relax there."},
+    {TR_CONFIG_DRAW_ASCLEPIUS, "Draw Rod of Asclepius for health menu"},
 };
 
 void translation_english(const translation_string **strings, int *num_strings)
