@@ -640,6 +640,8 @@ static void update_favor_rating(int is_yearly_update, int is_monthly_update)
             }
         }
 
+        city_data.ratings.favor += 10; // [rlaw]: hack to always increase favor at the start of the year
+
         if (city_data.ratings.favor < city_data.ratings.favor_last_year) {
             city_data.ratings.favor_change = 0;
         } else if (city_data.ratings.favor == city_data.ratings.favor_last_year) {
