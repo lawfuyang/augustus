@@ -4,10 +4,12 @@
 #include "core/dir.h"
 #include "core/file.h"
 #include "core/random.h"
+#include "game/settings.h"
 #include "graphics/color.h"
 #include "graphics/graphics.h"
 #include "graphics/screen.h"
 #include "scenario/property.h"
+#include "sound/device.h"
 #include "sound/speech.h"
 #include "time.h"
 
@@ -44,7 +46,13 @@ static struct {
     int overlay_alpha;
     int overlay_target;
     int overlay_color;
-    int overlay_fadeout;
+    int displayed_intensity;
+    int last_elements_count;
+    int last_intensity;
+    int last_active;
+    int is_sound_playing;
+    weather_type displayed_type;
+    weather_type last_type;
 
     weather_element *elements;
 
@@ -57,7 +65,14 @@ static struct {
     } weather_config;
 } data = {
     .wind_speed = 1,
-    .overlay_target = 100,
+    .overlay_target = 0,
+    .overlay_alpha = 0,
+    .last_elements_count = 0,
+    .last_active = 0,
+    .is_sound_playing = 0,
+    .last_intensity = 0,
+    .displayed_type = WEATHER_NONE,
+    .last_type = WEATHER_NONE,
     .weather_config = {
         .intensity = 200,
         .dx = 1,
@@ -75,8 +90,8 @@ void init_weather_element(weather_element *e, int type)
         case WEATHER_RAIN:
             e->length = 10 + random_from_stdlib() % 10;
             e->speed = 4 + random_from_stdlib() % 5;
-            if (data.weather_config.intensity < 500) {
-                e->wind_variation = (random_from_stdlib() % 2) - 0; // 0 or 1
+            if (data.weather_config.intensity < 600) {
+                e->wind_variation = 0;
             } else {
                 e->wind_variation = (random_from_stdlib() % 3) - 1; // -1, 0 or 1
             }
@@ -87,22 +102,29 @@ void init_weather_element(weather_element *e, int type)
             e->drift_direction = (random_from_stdlib() % 2 == 0) ? DRIFT_DIRECTION_RIGHT : DRIFT_DIRECTION_LEFT;
             break;
         case WEATHER_SAND:
-            e->speed = 1 + (random_from_stdlib() % 2);
+            e->speed = 2 + (random_from_stdlib() % 2);
             e->offset = random_between_from_stdlib(0, 1000);
             break;
     }
 }
 
-void weather_stop(void)
+static void weather_stop(void)
 {
-    data.weather_config.active = 0;
-
     if (data.elements) {
         free(data.elements);
         data.elements = 0;
     }
 
+    data.weather_config.active = 0;
     data.weather_initialized = 0;
+    data.last_elements_count = 0;
+    data.displayed_intensity = 0;
+    data.last_active = 0;
+    data.last_type = WEATHER_NONE;
+    data.last_intensity = 0;
+    data.overlay_target = 0;
+    data.overlay_alpha = 0;
+    data.displayed_type = WEATHER_NONE;
 }
 
 static uint32_t apply_alpha(uint32_t color, uint8_t alpha)
@@ -133,7 +155,7 @@ static void update_lightning(void)
     if (data.lightning_timer == 5) {
         char thunder_path[FILE_NAME_MAX];
         int thunder_num = random_between_from_stdlib(1, 2);
-        snprintf(thunder_path, sizeof(thunder_path), ASSETS_DIRECTORY "/Sounds/Thunder%d.mp3", thunder_num);
+        snprintf(thunder_path, sizeof(thunder_path), ASSETS_DIRECTORY "/Sounds/Thunder%d.ogg", thunder_num);
         sound_speech_play_file(thunder_path);
     }
 }
@@ -142,6 +164,25 @@ static void update_wind(void)
 {
     data.wind_angle += data.wind_speed;
     data.weather_config.dx = ((data.wind_angle / 10) % 5) - 2;
+}
+
+static void update_displayed_intensity(void)
+{
+    int target = data.weather_config.active ? data.weather_config.intensity : 0;
+    int duration = 48;
+    int diff = abs(target - data.displayed_intensity);
+
+    int speed = (diff > 0) ? (diff + duration - 1) / duration : 1;
+
+    if (data.displayed_intensity < target) {
+        data.displayed_intensity += speed;
+        if (data.displayed_intensity > target)
+            data.displayed_intensity = target;
+    } else if (data.displayed_intensity > target) {
+        data.displayed_intensity -= speed;
+        if (data.displayed_intensity < target)
+            data.displayed_intensity = target;
+    }
 }
 
 static void update_overlay_alpha(void)
@@ -157,38 +198,36 @@ static void update_overlay_alpha(void)
         data.overlay_alpha -= speed;
         if (data.overlay_alpha < data.overlay_target) {
             data.overlay_alpha = data.overlay_target;
-            data.overlay_fadeout = 0;
         }
     }
 }
 
 static void render_weather_overlay(void)
 {
+    if (data.displayed_type == WEATHER_RAIN && data.last_intensity < 800) {
+        return; // no overlay for light rain
+    }
+
     update_overlay_alpha();
 
-    if (data.overlay_fadeout == 0 && data.weather_config.active == 0) {
+    if (data.overlay_alpha == 0) {
         return;
     }
 
     int alpha_factor = 40;
-    if (data.weather_config.type == WEATHER_SNOW ||
-        (data.weather_config.type == WEATHER_RAIN && data.weather_config.intensity < 900)) {
+    if (data.displayed_type == WEATHER_SNOW ||
+        (data.displayed_type == WEATHER_RAIN && data.last_intensity < 900)) {
         alpha_factor = 20;
-    }
-
-    // no overlay for light rain
-    if (data.weather_config.type == WEATHER_RAIN && data.weather_config.intensity < 800) {
-        alpha_factor = 0;
     }
 
     uint8_t alpha = (uint8_t)(((alpha_factor * data.overlay_alpha) / 100) * 255 / 100);
 
     // update overlay color based on weather type
-    if (data.weather_config.type == WEATHER_RAIN) {
+    if (data.displayed_type == WEATHER_RAIN) {
         data.overlay_color = COLOR_WEATHER_RAIN;
-    } else if (data.weather_config.type == WEATHER_SNOW) {
+    } else if (data.displayed_type == WEATHER_SNOW) {
         data.overlay_color = COLOR_WEATHER_SNOW;
-    } else if (data.weather_config.type == WEATHER_SAND) {
+    } else if (data.displayed_type == WEATHER_SAND) {
         data.overlay_color = COLOR_WEATHER_SAND;
     }
 
@@ -198,7 +237,16 @@ static void render_weather_overlay(void)
 
 static void draw_snow(void)
 {
-    for (int i = 0; i < data.weather_config.intensity; ++i) {
+    if (!data.elements || data.displayed_intensity == 0) {
+        return;
+    }
+
+    int max_particles = data.last_elements_count;
+    int count = data.displayed_intensity;
+    if (count > max_particles) {
+        count = max_particles;
+    }
+    for (int i = 0; i < count; ++i) {
         int drift = ((data.elements[i].y + data.elements[i].drift_offset) % 10) - 5;
         data.elements[i].x += (drift / 10) * data.elements[i].drift_direction;
         data.elements[i].y += data.elements[i].speed;
@@ -226,7 +274,17 @@ static void draw_snow(void)
 
 static void draw_sandstorm(void)
 {
-    for (int i = 0; i < data.weather_config.intensity; ++i) {
+    if (!data.elements || data.displayed_intensity == 0) {
+        return;
+    }
+
+    int max_particles = data.last_elements_count;
+    int count = data.displayed_intensity;
+    if (count > max_particles) {
+        count = max_particles;
+    }
+    
+    for (int i = 0; i < count; ++i) {
         int wave = ((data.elements[i].y + data.elements[i].offset) % 10) - 5;
         data.elements[i].x += data.elements[i].speed + (wave / 10);
 
@@ -246,15 +304,30 @@ static void draw_sandstorm(void)
 
 static void draw_rain(void)
 {
-    if (data.weather_config.intensity < 500) {
+    if (!data.elements || data.displayed_intensity == 0) {
+        return;
+    }
+
+    if (data.weather_config.intensity < 600) {
         update_wind();
     }
 
     int wind_strength = abs(data.weather_config.dx);
     int base_speed = 3 + wind_strength + (data.weather_config.intensity / 300);
 
-    for (int i = 0; i < data.weather_config.intensity; ++i) {
-        int dx = data.weather_config.dx + data.elements[i].wind_variation;
+    int max_particles = data.last_elements_count;
+    int count = data.displayed_intensity;
+    if (count > max_particles) {
+        count = max_particles;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        int dx;
+        if (data.displayed_intensity < 600) {
+            dx = data.weather_config.dx;
+        } else {
+            dx = data.weather_config.dx + data.elements[i].wind_variation;
+        }
 
         graphics_draw_line(
             data.elements[i].x,
@@ -274,16 +347,50 @@ static void draw_rain(void)
         }
     }
 
-    if (data.weather_config.intensity > 800) {
+    if (data.displayed_intensity > 900) {
         update_lightning();
     }
 }
 
 void update_weather()
 {
-    render_weather_overlay();
 
-    if (!config_get(CONFIG_UI_DRAW_WEATHER) || data.weather_config.type == WEATHER_NONE || data.weather_config.active == 0) {
+    render_weather_overlay();
+    update_displayed_intensity();
+
+    if (!config_get(CONFIG_UI_DRAW_WEATHER)) {
+        if (data.is_sound_playing) {
+            sound_device_stop_type(SOUND_TYPE_EFFECTS);
+            data.is_sound_playing = 0;
+        }
+        weather_stop();
+        return;
+    }
+
+    int target_count = data.weather_config.intensity;
+    if (target_count != data.last_elements_count && target_count > 0) {
+        if (data.elements) {
+            free(data.elements);
+            data.elements = 0;
+        }
+        data.elements = malloc(sizeof(weather_element) * target_count);
+        for (int i = 0; i < target_count; ++i) {
+            init_weather_element(&data.elements[i], data.weather_config.type);
+        }
+        data.last_elements_count = target_count;
+    } else if (target_count == 0 && data.displayed_intensity == 0) {
+        if (data.elements) {
+            free(data.elements);
+            data.elements = 0;
+        }
+        data.last_elements_count = 0;
+    }
+
+    if ((data.weather_config.type == WEATHER_NONE || data.weather_config.active == 0) && data.displayed_intensity == 0) {
+        if (data.is_sound_playing) {
+            sound_device_stop_type(SOUND_TYPE_EFFECTS);
+            data.is_sound_playing = 0;
+        }
         weather_stop();
         return;
     }
@@ -298,19 +405,19 @@ void update_weather()
     }
 
     // SNOW
-    if (data.weather_config.type == WEATHER_SNOW) {
+    if (data.displayed_type == WEATHER_SNOW) {
         draw_snow();
         return;
     }
 
     // SANDSTORM
-    if (data.weather_config.type == WEATHER_SAND) {
+    if (data.displayed_type == WEATHER_SAND) {
         draw_sandstorm();
         return;
     }
 
     // RAIN
-    if (data.weather_config.type == WEATHER_RAIN) {
+    if (data.displayed_type == WEATHER_RAIN) {
         draw_rain();
     }
 
@@ -318,11 +425,6 @@ void update_weather()
 
 static void set_weather(int active, int intensity, weather_type type)
 {
-    weather_stop();
-    if (data.weather_config.active && active == 0) {
-        data.overlay_fadeout = 1;
-    }
-
     data.weather_config.active = active;
     data.weather_config.intensity = intensity;
     data.weather_config.type = type;
@@ -331,43 +433,39 @@ static void set_weather(int active, int intensity, weather_type type)
         data.overlay_target = 0;
     } else {
         data.overlay_target = 100;
+        data.displayed_type = type;
     }
+}
+
+void weather_reset(void)
+{
+    weather_stop();
+    sound_device_stop_type(SOUND_TYPE_EFFECTS);
 }
 
 void city_weather_update(int month)
 {
     static int weather_months_left = 0;
-    static int last_active = 0;
-    static int last_intensity = 0;
-    static weather_type last_type = WEATHER_NONE;
 
     int active;
     int intensity;
     weather_type type;
 
-    if (weather_months_left > 0) {
-        // keep last month's weather but reduce intensity
-        active = last_active;
-        intensity = last_intensity / 2;
-        
-        if (last_type == WEATHER_RAIN && intensity < 250) {
-            intensity = 250;
-        } else if (intensity < 1000) {
-            intensity = 1000;
-        }
-        
-        type = last_type;
+    if (weather_months_left > 0) {        
+        active = data.last_active;
+        intensity = data.last_intensity;        
+        type = data.last_type;
         weather_months_left--;
     } else {
-        active = chance_percent(20);
+        active = chance_percent(15);
         type = WEATHER_RAIN;
 
         if (scenario_property_climate() == CLIMATE_DESERT) {
-            active = chance_percent(10);
+            active = chance_percent(8);
             intensity = 5000;
             type = WEATHER_SAND;
         } else {
-            if (month == 10 || month == 11 || month == 0 || month == 1 || month == 2) {
+            if (month == 10 || month == 11 || month == 0 || month == 1) {
                 type = (random_from_stdlib() % 2 == 0) ? WEATHER_RAIN : WEATHER_SNOW;
             }
             if (WEATHER_RAIN == type) {
@@ -382,11 +480,23 @@ void city_weather_update(int month)
             type = WEATHER_NONE;
         } else {
             weather_months_left = 1;
+            if (WEATHER_RAIN == type) {
+                if (intensity > 800) {
+                    sound_device_play_file_on_channel_panned(ASSETS_DIRECTORY "/Sounds/HeavyRain.ogg", SOUND_TYPE_EFFECTS, setting_sound(SOUND_TYPE_EFFECTS)->volume, 100, 100, 1);
+                } else {
+                    sound_device_play_file_on_channel_panned(ASSETS_DIRECTORY "/Sounds/LightRain.ogg", SOUND_TYPE_EFFECTS, setting_sound(SOUND_TYPE_EFFECTS)->volume, 100, 100, 1);
+                }
+            } else if (WEATHER_SAND == type) {
+                sound_device_play_file_on_channel_panned(ASSETS_DIRECTORY "/Sounds/SandStorm.ogg", SOUND_TYPE_EFFECTS, setting_sound(SOUND_TYPE_EFFECTS)->volume, 100, 50, 1);
+            } else {
+                sound_device_play_file_on_channel_panned(ASSETS_DIRECTORY "/Sounds/Snow.ogg", SOUND_TYPE_EFFECTS, setting_sound(SOUND_TYPE_EFFECTS)->volume, 100, 100, 1);
+            }
+            data.is_sound_playing = 1;
         }
 
-        last_active = active;
-        last_intensity = intensity;
-        last_type = type;
+        data.last_active = active;
+        data.last_intensity = intensity;
+        data.last_type = type;
     }
 
     set_weather(active, intensity, type);
