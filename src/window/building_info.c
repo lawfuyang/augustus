@@ -59,8 +59,8 @@ enum {
     HEIGHT_4_14_BLOCKS = 4,
     HEIGHT_5_24_BLOCKS = 5,
     HEIGHT_6_38_BLOCKS = 6,
-    HEIGHT_7_48_BLOCKS = 7,
-    HEIGHT_8_SCALING = 8,
+    HEIGHT_7_26_BLOCKS = 7,
+    HEIGHT_8_40_BLOCKS = 8,
     HEIGHT_10_46_BLOCKS = 10,
     HEIGHT_11_28_BLOCKS = 11,
     HEIGHT_12_21_BLOCKS = 12,
@@ -162,6 +162,7 @@ static int get_height_id(void)
             case BUILDING_PALISADE:
             case BUILDING_GLADIATOR_STATUE:
                 return HEIGHT_1_16_BLOCKS;
+
                 //288px
             case BUILDING_FOUNTAIN:
             case BUILDING_GLADIATOR_SCHOOL:
@@ -170,7 +171,7 @@ static int get_height_id(void)
             case BUILDING_CHARIOT_MAKER:
                 return HEIGHT_2_18_BLOCKS;
 
-                //(new 320px for description)
+                //320px
             case BUILDING_PREFECTURE:
             case BUILDING_ENGINEERS_POST:
             case BUILDING_BARBER:
@@ -221,7 +222,7 @@ static int get_height_id(void)
             case BUILDING_PANTHEON:
             case BUILDING_HIPPODROME:
             case BUILDING_COLOSSEUM:
-                return HEIGHT_8_SCALING;
+                return HEIGHT_8_40_BLOCKS;
 
                 //736px
             case BUILDING_GRAND_TEMPLE_MARS:
@@ -234,7 +235,7 @@ static int get_height_id(void)
             case BUILDING_BARRACKS:
                 return HEIGHT_11_28_BLOCKS;
 
-                //272px (new 336px for description)
+                //336px
             case BUILDING_SHRINE_CERES:
             case BUILDING_SHRINE_NEPTUNE:
             case BUILDING_SHRINE_MERCURY:
@@ -1019,7 +1020,7 @@ static int handle_specific_building_info_mouse(const mouse *m)
             } else if (context.depot_selection.resource) {
                 window_building_handle_mouse_depot_select_resource(m, &context);
             } else {
-                window_building_handle_mouse_depot(m, &context);
+                return window_building_handle_mouse_depot(m, &context);
             }
         } else if (btype == BUILDING_LIGHTHOUSE) {
             return window_building_handle_mouse_lighthouse(m, &context);
@@ -1253,7 +1254,19 @@ void window_building_info_depot_toggle_condition_type(void)
 void window_building_info_depot_toggle_condition_threshold(void)
 {
     building *b = building_get(context.building_id);
-    b->data.depot.current_order.condition.threshold = (b->data.depot.current_order.condition.threshold + 4) % 36;
+    int step = config_get(CONFIG_GP_STORAGE_INCREMENT_4) ? 4 : 8;
+    int step_max = config_get(CONFIG_GP_STORAGE_INCREMENT_4) ? 36 : 40;
+    b->data.depot.current_order.condition.threshold = (b->data.depot.current_order.condition.threshold + step) % step_max;
+    window_invalidate();
+}
+
+void window_building_info_depot_toggle_condition_threshold_reverse(void)
+{
+    building *b = building_get(context.building_id);
+    int step = config_get(CONFIG_GP_STORAGE_INCREMENT_4) ? 4 : 8;
+    int new_threshold = (b->data.depot.current_order.condition.threshold - step);
+    new_threshold = new_threshold < 0 ? 32 : new_threshold;
+    b->data.depot.current_order.condition.threshold = new_threshold;
     window_invalidate();
 }
 

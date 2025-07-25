@@ -105,6 +105,7 @@ static translation_string all_strings[] = {
     {TR_CONFIG_RANDOM_COLLAPSES_TAKE_MONEY, "Randomly collapsing pits and mines take some money instead"},
     {TR_CONFIG_MULTIPLE_BARRACKS, "Allow building multiple barracks" },
     {TR_CONFIG_NOT_ACCEPTING_WAREHOUSES, "Warehouses and granaries don't accept anything when built"},
+    {TR_CONFIG_NOT_ACCEPTING_MARKETS, "Markets don't accept anything when built" },
     {TR_CONFIG_HOUSES_DONT_EXPAND_INTO_GARDENS, "Houses don't expand into gardens"},
     {TR_CONFIG_ROAMERS_DONT_SKIP_CORNERS, "Roaming walkers don't skip corners"},
     {TR_CONFIG_SHOW_MAX_POSSIBLE_PROSPERITY, "Display max attainable prosperity rating with current housing"},
@@ -1628,10 +1629,15 @@ static translation_string all_strings[] = {
     {TR_BUILDING_NATIVE_MONUMENT_DESC, "This magnificent structure has stood vigil over these lands since time immemorial. Some claim it proves that, with ingenuity and hard work, the local people may achieve great things, despite their inferior knowledge of engineering. Other, more skeptical people speculate that it is, perhaps, a miracle delivered by gods or a remnant from an ancient, extremely advanced civilization."},
     {TR_BUILDING_NATIVE_WATCHTOWER_DESC, "Using these structures, the natives observe every movement in your city, ever ready to exploit signs of weakness. Unless the locals are taught the benefits of Roman civilization, the guards watching from the tower will prevent expansion into this area."},
     {TR_BUILDING_INFO_CARAVANSERAI_MONTHLY_CONSUMPTION, "Monthly food consumption:" },
-    {TR_CONFIG_CARAVANS_MOVE_OFF_ROAD, "Trade caravans do not prioritise road networks" },
+    {TR_CONFIG_CARAVANS_MOVE_OFF_ROAD, "Trade caravans and ox carts do not prioritize road networks" },
     {TR_TOOLTIP_BUILDING_DISTRIBUTION_MAINTAINING, "Prevents everyone except cart depots from moving or taking the resource." },
     {TR_CONFIG_STORAGE_STEP_4, "Use multiples of 4 for granary, warehouse and cart depot quantity" },
     {TR_CONFIG_MOVE_SAVINGS_TO_THE_RIGHT, "Original top bar items order" },
+    {TR_TOOLTIP_DEPOT_MOVED, "Moving resource:" },
+    {TR_TOOLTIP_DEPOT_ORDER_TO, "to" },
+    {TR_TOOLTIP_RIGHT_CLICK_TO_DECREASE, "Right click to decrease" },
+    {TR_TOOLTIP_POPULATION_GOAL, "Population goal: "} ,
+    {TR_CONFIG_PATRICIAN_DEVOLUTION_FIX, "Patrician houses maintain integrity when devolving" },
 };
 
 void translation_english(const translation_string **strings, int *num_strings)

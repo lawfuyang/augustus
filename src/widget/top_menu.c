@@ -64,9 +64,7 @@ typedef enum {
 #define BLACK_PANEL_TOTAL_BLOCKS 6
 
 #define PANEL_MARGIN 10
-#define DATE_FIELD_WIDTH 120
-#define LAYOUT_HOLD_FRAMES 20
-#define MAX_SCREEN_WIDTH 1280
+#define DATE_FIELD_WIDTH 140
 
 static void menu_file_replay_map(int param);
 static void menu_file_load_game(int param);
@@ -162,6 +160,8 @@ static struct {
     int open_sub_menu;
     int focus_menu_id;
     int focus_sub_menu_id;
+    int extra_space;
+    int basic_margin;
 } data;
 
 static struct {
@@ -174,7 +174,6 @@ static struct {
     int peace;
     int favor;
     int health;
-    int frame_wait;
     int s_width;
     widget_layout_case_t current_layout;
 } drawn;
@@ -227,6 +226,7 @@ static void init(void)
     set_text_for_yearly_autosave();
     set_text_for_tooltips();
     set_text_for_warnings();
+    data.savings_on_right = config_get(CONFIG_UI_MOVE_SAVINGS_TO_RIGHT);
 }
 
 static void draw_background(void)
@@ -271,32 +271,36 @@ static void refresh_background(void)
 
 static int draw_black_panel(int x, int y, int width)
 {
-    int blocks = (width / BLACK_PANEL_BLOCK_WIDTH) - 1;
-    if ((width % BLACK_PANEL_BLOCK_WIDTH) > 0) {
-        blocks++;
+    if (width < BLACK_PANEL_BLOCK_WIDTH * BLACK_PANEL_TOTAL_BLOCKS) {
+        width = BLACK_PANEL_BLOCK_WIDTH * BLACK_PANEL_TOTAL_BLOCKS;  // enforce minimum panel size
     }
 
+    int blocks = ((width + BLACK_PANEL_BLOCK_WIDTH - 1) / BLACK_PANEL_BLOCK_WIDTH) - 2;
+    int actual_width = (blocks + 2) * BLACK_PANEL_BLOCK_WIDTH;
+
+    // Step 1: Draw start cap
     image_draw(image_group(GROUP_TOP_MENU) + 14, x, y, COLOR_MASK_NONE, SCALE_NONE);
-    if (blocks <= BLACK_PANEL_MIDDLE_BLOCKS) {
-        return BLACK_PANEL_TOTAL_BLOCKS * BLACK_PANEL_BLOCK_WIDTH;
-    }
+    x += BLACK_PANEL_BLOCK_WIDTH;
+
+    // Step 2: Load base panel images
     static int black_panel_base_id;
     if (!black_panel_base_id) {
         black_panel_base_id = assets_get_image_id("UI", "Top_UI_Panel");
     }
-    int x_offset = BLACK_PANEL_BLOCK_WIDTH * (BLACK_PANEL_MIDDLE_BLOCKS + 1);
-    blocks -= BLACK_PANEL_MIDDLE_BLOCKS;
 
+    // Step 3: Draw middle blocks
     for (int i = 0; i < blocks; i++) {
-        image_draw(black_panel_base_id + (i % BLACK_PANEL_MIDDLE_BLOCKS) + 1, x + x_offset, y,
+        image_draw(black_panel_base_id + (i % BLACK_PANEL_MIDDLE_BLOCKS) + 1, x, y,
             COLOR_MASK_NONE, SCALE_NONE);
-        x_offset += BLACK_PANEL_BLOCK_WIDTH;
+        x += BLACK_PANEL_BLOCK_WIDTH;
     }
 
-    image_draw(black_panel_base_id + 5, x + x_offset, y, COLOR_MASK_NONE, SCALE_NONE);
+    // Step 4: Draw end cap
+    image_draw(black_panel_base_id + 5, x, y, COLOR_MASK_NONE, SCALE_NONE);
 
-    return x_offset + BLACK_PANEL_BLOCK_WIDTH;
+    return actual_width;
 }
+
 
 static int get_black_panel_actual_width(int desired_width)
 {
@@ -308,8 +312,6 @@ static int get_black_panel_actual_width(int desired_width)
     if (blocks < BLACK_PANEL_MIDDLE_BLOCKS) {
         blocks = BLACK_PANEL_MIDDLE_BLOCKS; // ensure at least minimal middle blocks
     }
-
-    // actual width = left cap + middle blocks + right cap
     return (blocks + 2) * BLACK_PANEL_BLOCK_WIDTH;
 }
 
@@ -317,7 +319,7 @@ static int get_black_panel_total_width_for_text_id(int group, int id, int number
 {
     int label_width = lang_text_get_width(group, id, font);
     int number_width = text_get_number_width(number, '@', " ", font);
-    int text_width = label_width + number_width + BLACK_PANEL_BLOCK_WIDTH * 2; // add padding
+    int text_width = label_width + number_width; // add padding
     int total_width = get_black_panel_actual_width(text_width);
 
     return total_width;
@@ -337,73 +339,78 @@ static int detect_layout_change(void)
     return 1;
 }
 
+static void reset_data_states(void)
+{
+    top_menu_tooltip_range *ranges[] = {
+        &data.funds, &data.population, &data.date,
+        &data.personal, &data.culture, &data.prosperity,
+        &data.peace, &data.favor, &data.ratings, &data.health
+    };
+
+    for (size_t i = 0; i < sizeof(ranges) / sizeof(ranges[0]); ++i) {
+        ranges[i]->start = 0;
+        ranges[i]->end = 0;
+    }
+    data.basic_margin = PANEL_MARGIN;
+    data.extra_space = 0;
+}
+
 static widget_layout_case_t widget_top_menu_measure_layout(int available_width, font_t font)
 {
-
-    if (drawn.frame_wait > 0 && !detect_layout_change()) { //coldown on changes
-        drawn.frame_wait--;
-        return drawn.current_layout;
-    }
-    drawn.frame_wait = LAYOUT_HOLD_FRAMES;
-
-    // measure each widget
     char tmp[32];
     sprintf(tmp, "%d(%d)", 999, 999); // max rating string
     int rating_one_block_w = text_get_width((const uint8_t *) tmp, font);
-    int w_funds = get_black_panel_total_width_for_text_id(
-        6, 0, (city_finance_treasury() > 99999 ? 99999999 : 99999), font);
-    int w_savings = get_black_panel_total_width_for_text_id(
-        6, 0, (city_emperor_personal_savings() > 10000 ? 100000 : 10000), font);
-    int w_population = get_black_panel_total_width_for_text_id(
-        6, 1, (city_population() > 10000 ? 100000 : 10000), font);
+    int w_funds = get_black_panel_total_width_for_text_id(6, 0, 99999, font); //5 digit city treasury as base
+    int w_savings = get_black_panel_total_width_for_text_id(6, 0, 9999, font); //4 digit city treasury as base
+    int w_population = get_black_panel_total_width_for_text_id(6, 1, 99999, font); //5 digit city pop as base
     int w_date = DATE_FIELD_WIDTH + BLACK_PANEL_BLOCK_WIDTH; // returned block is longer
-    // use bounds instead of live, to avoid frequent changes
+    int w_rating = get_black_panel_actual_width(rating_one_block_w * 4.5f);
+    // half block for health, one extra block to ensure everything fits in edge cases
 
-    int w_rating = rating_one_block_w * 4.5f;  //half block for health
-
-    // decide BASIC vs FULL
-    int min_basic = w_funds + w_population + w_date - 4 * PANEL_MARGIN; // relax the rules a bit
-    int min_full = w_funds + w_savings + w_population + DATE_FIELD_WIDTH + w_rating + PANEL_MARGIN * 6;
+    int min_basic = w_funds + w_population + w_date;
+    int min_full = w_funds + w_savings + w_population + DATE_FIELD_WIDTH + w_rating + BLACK_PANEL_BLOCK_WIDTH;
+    // decide BASIC vs FULL, no margins for minimum size
 
     widget_layout_case_t layout;
-    int basic_margin = PANEL_MARGIN;
+    data.basic_margin = PANEL_MARGIN;
+    data.extra_space = 0;
 
+    reset_data_states();
     if (available_width >= min_full) {
         layout = WIDGET_LAYOUT_FULL;
-        if (available_width < min_full * 1.2f) {
-            basic_margin = 0;
-        }
+        data.extra_space = (available_width >= min_full * 1.2f) ? BLACK_PANEL_BLOCK_WIDTH : 0;
+        data.basic_margin = (data.extra_space == 0) ? 0 : data.basic_margin;
     } else if (available_width >= min_basic) {
         layout = WIDGET_LAYOUT_BASIC;
-        if (available_width < min_basic * 1.2f) {
-            basic_margin = 0;
-        }
+        data.extra_space = (available_width >= min_basic * 1.2f) ? BLACK_PANEL_BLOCK_WIDTH : 0;
+        data.basic_margin = (data.extra_space == 0) ? 0 : data.basic_margin;
     } else {
         layout = WIDGET_LAYOUT_NONE;
     }
 
     // GROUP 1:
-    int current_x = data.menu_end + basic_margin;
+    int current_x = data.menu_end + data.basic_margin;
     data.funds.start = current_x;
-    data.funds.end = current_x + w_funds;
-    current_x += w_funds + basic_margin;
+    data.funds.end = current_x + w_funds + data.extra_space;
+    current_x += w_funds + data.basic_margin + data.extra_space;
 
     if (layout == WIDGET_LAYOUT_FULL && !data.savings_on_right) {
         data.personal.start = current_x;
-        data.personal.end = current_x + w_savings;
-        current_x += w_savings + basic_margin;
+        data.personal.end = current_x + w_savings + data.extra_space;
+        current_x += w_savings + data.basic_margin + data.extra_space;
     }
 
     data.population.start = current_x;
-    data.population.end = current_x + w_population;
-    current_x += w_population + basic_margin;
+    data.population.end = current_x + w_population + data.extra_space;
+    current_x += w_population + data.basic_margin + data.extra_space;
     int group1_end_x = current_x;
 
     // precompute some values
     float avail_w = (float) available_width;
     int group1_span = group1_end_x - data.menu_end;
-    int group3_min_w = w_rating + (data.savings_on_right ? (basic_margin + w_savings) : basic_margin);
-    int bar_right_edge = data.menu_end + available_width - BLACK_PANEL_BLOCK_WIDTH;
+    int group3_min_w = w_rating + (data.savings_on_right ? (data.basic_margin + w_savings + data.extra_space) : data.basic_margin);
+    int bar_right_edge = data.menu_end + available_width - data.extra_space;
+
 
     // GROUP 2: date and  45% / 80% checks + OOB guard
     int date_start_x;
@@ -411,11 +418,11 @@ static widget_layout_case_t widget_top_menu_measure_layout(int available_width, 
         unsigned char g1_too_big = (group1_span >= 0.45f * avail_w);
         unsigned char g1g3_too_big = (group1_span + group3_min_w >= 0.80f * avail_w);
 
-        int center_pos_x = data.menu_end + (available_width - DATE_FIELD_WIDTH) / 2 - BLACK_PANEL_BLOCK_WIDTH;
+        int center_pos_x = data.menu_end + (available_width - w_date) / 2;
         unsigned char center_breaks_g3 =
-            (center_pos_x + DATE_FIELD_WIDTH + basic_margin + group3_min_w) > bar_right_edge;
-
-        if (g1_too_big || g1g3_too_big || center_breaks_g3) {
+            (center_pos_x + w_date + data.basic_margin + group3_min_w) > bar_right_edge;
+        unsigned char center_overlap = center_pos_x < group1_end_x;
+        if (g1_too_big || g1g3_too_big || center_breaks_g3 || center_overlap) {
             date_start_x = group1_end_x;
         } else {
             date_start_x = center_pos_x;
@@ -424,67 +431,65 @@ static widget_layout_case_t widget_top_menu_measure_layout(int available_width, 
         date_start_x = group1_end_x;
     }
     data.date.start = date_start_x;
-    data.date.end = date_start_x + DATE_FIELD_WIDTH + BLACK_PANEL_BLOCK_WIDTH;
+    data.date.end = date_start_x + w_date + data.extra_space;
+
 
     // GROUP 3
     if (layout == WIDGET_LAYOUT_FULL) {
         int group3_start_x;
-        unsigned char force_sequence = (group1_span + group3_min_w >= 0.80f * avail_w);
+        unsigned char force_sequence = (group1_span + group3_min_w + w_date >= 0.90f * avail_w);
         // if >80%, force sequentional drawing
         unsigned char too_big_overall =
             (group3_min_w > 0.45f * avail_w)
-            || (group3_min_w > 0.90f * (available_width - group1_span - DATE_FIELD_WIDTH))
-            || (group3_min_w > (0.5f * avail_w - DATE_FIELD_WIDTH));
+            || (group3_min_w > 0.90f * (available_width - group1_span - w_date))
+            || (group3_min_w > (0.5f * avail_w - w_date));
 
         if (force_sequence || too_big_overall) {
             group3_start_x = data.date.end + PANEL_MARGIN; // force Panel margin here for visual consistency
         } else {
             // anchor to right edge
-            group3_start_x = bar_right_edge - w_rating - basic_margin;
+            group3_start_x = bar_right_edge - w_rating - PANEL_MARGIN - data.extra_space;
             if (data.savings_on_right) {
-                group3_start_x -= (basic_margin + w_savings);
+                group3_start_x -= (data.basic_margin + w_savings);
             }
         }
-        // clamp so group3 never overruns
-        int group3_end_x = group3_start_x + group3_min_w;
-        if (group3_end_x > bar_right_edge) {
-            group3_start_x -= (group3_end_x - bar_right_edge);
-        }
-
         int x3 = group3_start_x;
         if (data.savings_on_right) {
             data.personal.start = x3;
-            data.personal.end = x3 + w_savings;
-            x3 += w_savings + basic_margin;
+            data.personal.end = x3 + w_savings + data.extra_space;
+            x3 += w_savings + data.basic_margin + data.extra_space;
         }
         data.ratings.start = x3;
+        data.ratings.end = x3 + w_rating + data.extra_space;
     }
     drawn.current_layout = layout;
     return layout;
 }
 
 static int draw_panel_with_text_and_number(int offset, int lang_section, int lang_index,
-                                           int number, int margin, font_t font, color_t label_color, color_t num_color)
+    int number, int margin, int fixed_width, font_t font, color_t label_color, color_t num_color)
 {
     int label_width = lang_text_get_width(lang_section, lang_index, font);
     int number_width = text_get_number_width(number, '@', " ", font);
     int text_width = label_width + number_width + 2 * margin;
 
     // Compute required usable width + total panel width (adds end caps)
-    int panel_width = draw_black_panel(offset, 0, text_width);
+    int black_panel_width = (fixed_width > 0) ? fixed_width : text_width;
+
+    int panel_width = draw_black_panel(offset, 0, black_panel_width);
     int end_of_panel = offset + panel_width;
     int usable_width = end_of_panel - offset - 2 * BLACK_PANEL_BLOCK_WIDTH;
     int draw_x = offset + BLACK_PANEL_BLOCK_WIDTH + (usable_width / 2) - text_width / 2;
     // Draw label
     lang_text_draw_colored(lang_section, lang_index, draw_x, 5, font, label_color);
     // Draw number right after label
-    text_draw_number(number, '@', " ", draw_x + label_width, 5, font, num_color);
+    text_draw_number(number, '@', "\0", draw_x + label_width, 5, font, num_color);
 
     return end_of_panel - offset;
 }
 
-static int draw_rating_panel(int offset, int info_id, int box_width,
-                             font_t font, color_t val_color, color_t goal_color)
+static int draw_rating_panel(int offset, int info_id, int box_width, int gap_length,
+                             font_t font, color_t goal_color)
 {
     int value = 0, goal = 0;
 
@@ -509,14 +514,14 @@ static int draw_rating_panel(int offset, int info_id, int box_width,
             return 0;
     }
 
-    int gap_length = 2;
     int value_width = text_get_number_width(value, '@', " ", font);
     int goal_width = text_get_number_width(goal, '(', ")", font);
     int total_width = value_width + gap_length + goal_width;
 
     int x = offset + (box_width - total_width) / 2;
+    color_t val_color = (value >= goal && goal > 0) ? COLOR_FONT_GREEN : COLOR_WHITE;
     text_draw_number(value, '@', " ", x, 5, font, val_color);
-    text_draw_number(goal, '(', ")", x + value_width + gap_length, 5, font, goal_color);
+    text_draw_number(goal, '(', ")", x + value_width, 5, font, goal_color);
     return box_width;
 }
 
@@ -533,11 +538,11 @@ static int draw_health_panel(int offset, int box_width, font_t font)
     else
         color = COLOR_FONT_RED;
 
-    int health_w = text_get_number_width(health, '@', "", font);
+    int health_w = text_get_number_width(health, ' ', "", font);
 
     // center it in the box
     int x = offset + (box_width - health_w) / 2;
-    text_draw_number(health, '@', "", x, 5, font, color);
+    text_draw_number(health, ' ', "", x, 5, font, color);
 
     return box_width;
 }
@@ -607,57 +612,90 @@ void widget_top_menu_draw(int force)
 
     // Layout settings
     int s_width = screen_width();
-    font_t font = (s_width < 800) ? FONT_NORMAL_GREEN : FONT_NORMAL_PLAIN;
-    color_t pop_color = (s_width < 800) ? COLOR_MASK_NONE : COLOR_WHITE;
-    color_t date_color = (s_width < 800) ? COLOR_MASK_NONE : COLOR_FONT_YELLOW;
+
 
     refresh_background();
-    data.menu_end = menu_bar_draw(menu, 4, s_width < 1024 ? 338 : 493);
+    data.menu_end = menu_bar_draw(menu, 4, 340);
     //calculate layout
-    widget_layout_case_t layout = widget_top_menu_measure_layout(s_width - data.menu_end, font);
+    widget_layout_case_t layout = widget_top_menu_measure_layout(s_width - data.menu_end, FONT_NORMAL_PLAIN);
 
-    // --- Draw Treasury ---
+    font_t font = (layout == WIDGET_LAYOUT_NONE) ? FONT_NORMAL_GREEN : FONT_NORMAL_PLAIN;
+    color_t pop_color = (layout == WIDGET_LAYOUT_NONE) ? COLOR_MASK_NONE : COLOR_WHITE;
+    color_t date_color = (layout == WIDGET_LAYOUT_NONE) ? COLOR_MASK_NONE : COLOR_FONT_YELLOW;
     int treasury = city_finance_treasury();
     color_t treasury_color = (treasury < 0) ? COLOR_FONT_RED : COLOR_WHITE;
+
+
+    // Minimal layout: no panels, just numbers
+    if (layout == WIDGET_LAYOUT_NONE) {
+        int current_x = data.menu_end;
+        data.funds.start = current_x;
+        current_x += lang_text_draw_colored(6, 0, current_x, 5, font, treasury_color);
+        // Draw number right after label
+        current_x += text_draw_number(treasury, '@', "\0", current_x, 5, font, treasury_color);
+        data.funds.end = current_x;
+        current_x += PANEL_MARGIN;
+        data.population.start = current_x;
+        current_x += lang_text_draw_colored(6, 1, current_x, 5, font, pop_color);
+        current_x += text_draw_number(city_population(), '@', "\0", current_x, 5, font, pop_color);
+        data.population.end = current_x;
+        current_x += PANEL_MARGIN;
+        data.date.start = current_x;
+        lang_text_draw_month_year_max_width(game_time_month(), game_time_year(),
+                current_x, 5, DATE_FIELD_WIDTH - BLACK_PANEL_BLOCK_WIDTH, font, date_color);
+        data.date.end = current_x + DATE_FIELD_WIDTH - BLACK_PANEL_BLOCK_WIDTH;
+    }
+
+
     if (layout >= WIDGET_LAYOUT_BASIC) {
-        draw_panel_with_text_and_number(data.funds.start, 6, 0, treasury, 3, font, treasury_color, treasury_color);
+        // --- Draw Treasury ---
+        int treasury_w = data.funds.end - data.funds.start;
+        draw_panel_with_text_and_number(data.funds.start, 6, 0, treasury, 3, treasury_w, font, treasury_color,
+            treasury_color);
         // --- Draw Population ---
-        draw_panel_with_text_and_number(data.population.start, 6, 1, city_population(), 3, font, pop_color, pop_color);
+        int population_w = data.population.end - data.population.start;
+
+        draw_panel_with_text_and_number(data.population.start, 6, 1, city_population(), 3, population_w, font,
+         pop_color, pop_color);
         // --- Draw Date ---
         int date_x = data.date.start;
-        draw_black_panel(date_x, 0, DATE_FIELD_WIDTH);
-        int month_offset = date_x + BLACK_PANEL_BLOCK_WIDTH + 14; // 14px is enough for day
-        text_draw_number(get_cosmetic_day_of_month(), 0, "", date_x + PANEL_MARGIN, 5, font, date_color);
+        draw_black_panel(date_x, 0, DATE_FIELD_WIDTH + data.extra_space);
+        int month_offset = date_x + data.extra_space / 2 + BLACK_PANEL_BLOCK_WIDTH + 14; // 14px is enough for day
+        text_draw_number(get_cosmetic_day_of_month(), 0, "", date_x + PANEL_MARGIN + data.extra_space / 2, 5, font,
+         date_color);
         lang_text_draw_month_year_max_width(game_time_month(), game_time_year(),
-         month_offset, 5, DATE_FIELD_WIDTH - BLACK_PANEL_BLOCK_WIDTH, font, date_color);
+         month_offset, 5, DATE_FIELD_WIDTH - BLACK_PANEL_BLOCK_WIDTH - 14, font, date_color);
     }
 
     // --- Group 2: Ratings (if enabled and space allows) ---
-    if (layout == WIDGET_LAYOUT_FULL && s_width >= 1024) {
+    if (layout == WIDGET_LAYOUT_FULL) {
         // Draw Savings 
         color_t savings_color = get_savings_color_mask();
-        draw_panel_with_text_and_number(data.personal.start, 6, 0, city_emperor_personal_savings(), 3, font, savings_color, savings_color);
+        int savings_w = data.personal.end - data.personal.start;
+
+        draw_panel_with_text_and_number(data.personal.start, 6, 0, city_emperor_personal_savings(), 3, savings_w,
+        font, savings_color, savings_color);
 
         char rating_buf[20];
         sprintf(rating_buf, "%d(%d)", 999, 999);
         int label_w = text_get_width((const uint8_t *) rating_buf, font);
-        int block_w = label_w * 4 + label_w / 2; //half for health rating
-        int slot_w = (block_w - (label_w / 2)) / 4;
+        int block_w = data.ratings.end - data.ratings.start; //half for health rating
+        int slot_w = (block_w - data.extra_space - (label_w / 2)) / 4;
         int x = data.ratings.start;
 
 
         draw_black_panel(x, 0, block_w);
-        x += BLACK_PANEL_BLOCK_WIDTH / 2;
-
+        x += data.extra_space / 2;
         const int rating_ids[] = { INFO_CULTURE, INFO_PROSPERITY, INFO_PEACE, INFO_FAVOR };
         top_menu_tooltip_range *targets[] = { &data.culture, &data.prosperity, &data.peace, &data.favor };
+        int gap_length = 2;
         for (int i = 0; i < 4; ++i) {
             int x_offset = x + slot_w * i;
             targets[i]->start = x_offset;
-            targets[i]->end = x_offset + draw_rating_panel(x_offset, rating_ids[i], slot_w, font, pop_color, date_color);
+            targets[i]->end = x_offset + draw_rating_panel(x_offset, rating_ids[i], slot_w, gap_length, font, date_color);
         }
         data.health.start = targets[3]->end;
-        data.health.end = draw_health_panel(targets[3]->end, slot_w / 2, font) + targets[3]->end;
+        data.health.end = draw_health_panel(targets[3]->end - gap_length * 2, slot_w / 2, font) + targets[3]->end;
 
     }
 
@@ -751,6 +789,10 @@ static int handle_mouse_menu(const mouse *m)
     int top_menu_widget = get_info_id(m->x, m->y); //hack to get mouse position over widget
 
     switch (top_menu_widget) {
+        case INFO_FUNDS:
+            if (m->left.went_up) {
+                menu_advisors_go_to(ADVISOR_FINANCIAL);
+            }
         case INFO_PERSONAL:
             if (m->left.went_up) {
                 menu_advisors_go_to(ADVISOR_IMPERIAL);
@@ -802,6 +844,17 @@ int widget_top_menu_get_tooltip_text(tooltip_context *c)
     }
     int button_id = get_info_id(c->mouse_x, c->mouse_y);
     if (button_id) {
+        if (button_id == INFO_POPULATION) {
+            if (scenario_criteria_population_enabled()) {
+                const uint8_t *original_tooltip = lang_get_string(68, 59 + INFO_POPULATION);
+                const uint8_t *precomposed_text = lang_get_string(CUSTOM_TRANSLATION, TR_TOOLTIP_POPULATION_GOAL);
+                int value = scenario_criteria_population();
+                static char formatted_text[128];
+                snprintf(formatted_text, sizeof(formatted_text), "%s\n%s %d", original_tooltip, precomposed_text, value);
+                const uint8_t *final_text = (const uint8_t *) formatted_text;
+                c->precomposed_text = final_text;
+            }
+        }
         if (button_id < 4) {
             return 59 + button_id;
         } else if (button_id == INFO_PERSONAL) {
