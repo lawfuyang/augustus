@@ -216,6 +216,10 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
         .sound_id = SOUND_CITY_GARDEN,
         .event_data.attr = "gardens",
     },
+    [BUILDING_MENU_FORT] = {
+        .event_data.attr = "fort|all_forts",
+        .event_data.key = TR_PARAMETER_VALUE_BUILDING_MENU_FORTS
+    },
     [BUILDING_FORT_GROUND] = {
         .size = 4,
         .fire_proof = 1,
@@ -528,11 +532,13 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
     },
     [BUILDING_LOW_BRIDGE] = {
         .size = 1,
-        .fire_proof = 1
+        .fire_proof = 1,
+        .event_data.attr = "low_bridge"
     },
     [BUILDING_SHIP_BRIDGE] = {
         .size = 1,
-        .fire_proof = 1
+        .fire_proof = 1,
+        .event_data.attr = "ship_bridge"
     },
     [BUILDING_SENATE] = {
         .size = 5,
@@ -618,7 +624,7 @@ static building_properties properties[BUILDING_TYPE_MAX] = {
         .image_group = 76,
         .sound_id = SOUND_CITY_ORACLE,
         .draw_desirability_range = 1,
-        .event_data.attr = "amphitheater"
+        .event_data.attr = "oracle"
     },
     [BUILDING_BURNING_RUIN] = {
         .size = 1,
