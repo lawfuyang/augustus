@@ -373,6 +373,13 @@ void figure_soldier_action(figure *f)
         speed_factor = 2;
     } else {
         speed_factor = 1;
+
+        // [rlaw] BEGIN: hack to make legionaries faster
+        if (f->type == FIGURE_FORT_LEGIONARY)
+        {
+            speed_factor = 2;
+        }
+        // [rlaw] END
     }
     int layout = m->layout;
     if (f->formation_at_rest || f->action_state == FIGURE_ACTION_81_SOLDIER_GOING_TO_FORT) {
