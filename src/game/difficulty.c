@@ -3,7 +3,6 @@
 #include "core/calc.h"
 #include "game/settings.h"
 
-// [rlaw]: bump up enemy soldier count for 'hard' to be same as 'very hard'
 static const struct {
     int money;
     int enemies;
@@ -20,7 +19,7 @@ static const struct {
     { 300,  40, 70, 80,   0, 10, -3, 16, 20, 36, 0 }, // very easy
     { 200,  60, 60, 75,   0,  9, -3, 17, 22, 30, 0 }, // easy
     { 150,  80, 50, 70,  50,  8, -2, 18, 24, 24, 1 }, // normal
-    { 100, 120, 50, 65, 100,  7,  0, 20, 27, 18, 3 }, // hard
+    { 100, 100, 50, 65, 100,  7,  0, 20, 27, 18, 3 }, // hard
     {  75, 120, 40, 60, 100,  6,  1, 22, 30, 12, 5 }  // very hard
 };
 

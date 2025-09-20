@@ -115,9 +115,6 @@ static void resource_multiplier_reset(void)
 // Mercury Grand Temple base bonus to trader speed
 static int trader_bonus_speed(void)
 {
-    // [rlaw]: hack 5x speed
-    return 500;
-
     if (building_monument_working(BUILDING_GRAND_TEMPLE_MERCURY)) {
         return 25;
     } else {
@@ -128,9 +125,6 @@ static int trader_bonus_speed(void)
 // Neptune Grand Temple base bonus to trader speed
 static int sea_trader_bonus_speed(void)
 {
-    // [rlaw]: hack 5x speed
-    return 500;
-
     if (building_monument_working(BUILDING_GRAND_TEMPLE_NEPTUNE)) {
         return 25;
     } else {
@@ -1024,6 +1018,9 @@ int figure_trade_land_trade_units(void)
         }
         unit += add_unit;
     }
+
+    unit = INT32_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
+
     return unit;
 }
 
@@ -1059,6 +1056,8 @@ int figure_trade_sea_trade_units(void)
         }
         unit += add_unit;
     }
+
+    unit = INT32_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
 
     return unit;
 }
