@@ -1019,7 +1019,7 @@ int figure_trade_land_trade_units(void)
         unit += add_unit;
     }
 
-    unit = INT32_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
+    unit = INT8_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
 
     return unit;
 }
@@ -1057,7 +1057,7 @@ int figure_trade_sea_trade_units(void)
         unit += add_unit;
     }
 
-    unit = INT32_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
+    unit = INT8_MAX; // [rlaw]: unlimited land trade units for caravans and native traders
 
     return unit;
 }
