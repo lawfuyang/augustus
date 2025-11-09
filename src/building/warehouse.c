@@ -5,7 +5,7 @@
 #include "building/granary.h"
 #include "building/industry.h"
 #include "building/monument.h"
-#include "building/model.h"
+#include "building/properties.h"
 #include "building/storage.h"
 #include "city/finance.h"
 #include "city/resource.h"
@@ -66,10 +66,10 @@ int building_warehouse_get_amount(building *warehouse, int resource)
     return loads;
 }
 
-int building_warehouse_get_free_space_amount(building *b)
+int building_warehouse_get_free_space_amount(building *warehouse)
 {
-    building_warehouse_recount_resources(b); //recount, since free space in warehouse is tied to individual spaces
-    return b->resources[RESOURCE_NONE];
+    building_warehouse_recount_resources(warehouse); //recount, since free space in warehouse is tied to individual spaces
+    return warehouse->resources[RESOURCE_NONE];
 }
 
 int building_warehouse_get_available_amount(building *warehouse, int resource)
@@ -300,7 +300,7 @@ static void building_warehouse_space_set_image(building *space, int resource)
     map_image_set(space->grid_offset, image_id);
 }
 
-int building_warehouse_add_import(building *warehouse, int resource, int amount, int land_trader)
+int building_warehouse_add_import(building *warehouse, int resource, int amount, int trader_type)
 {
     if (warehouse->type != BUILDING_WAREHOUSE) {
         building *main_warehouse = building_main(warehouse);
@@ -309,8 +309,20 @@ int building_warehouse_add_import(building *warehouse, int resource, int amount,
             // account for fetched warehouse space instead of main warehouse
         }
     }
-    building_storage_permission_states permission = land_trader ?
-        BUILDING_STORAGE_PERMISSION_TRADERS : BUILDING_STORAGE_PERMISSION_DOCK;
+    building_storage_permission_states permission;
+    switch (trader_type) {
+        default:
+        case 0: // sea trader
+            permission = BUILDING_STORAGE_PERMISSION_DOCK;
+            break;
+        case 1: // land trader
+            permission = BUILDING_STORAGE_PERMISSION_TRADERS;
+            break;
+        case -1: //native trader
+            permission = BUILDING_STORAGE_PERMISSION_NATIVES;
+            trader_type = 1; // native trader is always land trader
+            break;
+    }
     if (!building_storage_get_permission(permission, warehouse)) {
         return 0; // cannot import to this warehouse
     }
@@ -321,12 +333,12 @@ int building_warehouse_add_import(building *warehouse, int resource, int amount,
     if (added_amount <= 0) {
         return 0; // no space to add
     }
-    int price = trade_price_buy(resource, land_trader);
+    int price = trade_price_buy(resource, trader_type);
     city_finance_process_import(price * added_amount);
     return 1;
 }
 
-int building_warehouse_remove_export(building *warehouse, int resource, int amount, int land_trader)
+int building_warehouse_remove_export(building *warehouse, int resource, int amount, int trader_type)
 {
     if (warehouse->type != BUILDING_WAREHOUSE) {
         building *main_warehouse = building_main(warehouse);
@@ -339,7 +351,8 @@ int building_warehouse_remove_export(building *warehouse, int resource, int amou
         return 0; // invalid resource or amount
     }
     building_storage_permission_states permission;
-    switch (land_trader) {
+    switch (trader_type) {
+        default:
         case 0: // sea trader
             permission = BUILDING_STORAGE_PERMISSION_DOCK;
             break;
@@ -348,7 +361,7 @@ int building_warehouse_remove_export(building *warehouse, int resource, int amou
             break;
         case -1: //native trader
             permission = BUILDING_STORAGE_PERMISSION_NATIVES;
-            land_trader = 1; // native trader is always land trader
+            trader_type = 1; // native trader is always land trader
             break;
     }
 
@@ -356,7 +369,7 @@ int building_warehouse_remove_export(building *warehouse, int resource, int amou
         return 0; // cannot export from this warehouse
     }
     int removed_amount = building_warehouse_try_remove_resource(warehouse, resource, amount);
-    int price = trade_price_sell(resource, land_trader);
+    int price = trade_price_sell(resource, trader_type);
     city_finance_process_export(price * removed_amount);
     return removed_amount;
 }
@@ -429,28 +442,27 @@ static int building_warehouse_max_space_for_resource(building *b, int resource)
     return max_storable;
 }
 
-int building_warehouse_maximum_receptible_amount(building *b, int resource)
+int building_warehouse_maximum_receptible_amount(building *warehouse, int resource)
 {
-    building_warehouse_recount_resources(b);
-    if (b->has_plague || building_storage_get_empty_all(b->id) ||
-         b->state != BUILDING_STATE_IN_USE || b->resources[RESOURCE_NONE] <= 0) {
+    building_warehouse_recount_resources(warehouse);
+    if (warehouse->has_plague || building_storage_get_empty_all(warehouse->id) ||
+        warehouse->state != BUILDING_STATE_IN_USE || warehouse->resources[RESOURCE_NONE] <= 0) {
         return 0;
     }
-    if (building_storage_get_state(b, resource, 1) == BUILDING_STORAGE_STATE_NOT_ACCEPTING) {
+    if (building_storage_get_state(warehouse, resource, 1) == BUILDING_STORAGE_STATE_NOT_ACCEPTING) {
         return 0; // early check for relative state
     }
-    unsigned char max_allowed = get_acceptable_quantity(b, resource);
-    unsigned char current_amount = building_warehouse_get_amount(b, resource);
+    unsigned char max_allowed = get_acceptable_quantity(warehouse, resource);
+    unsigned char current_amount = building_warehouse_get_amount(warehouse, resource);
     unsigned char remaining_allowed = (max_allowed > current_amount) ? (max_allowed - current_amount) : 0;
 
-    unsigned char resource_space_limit = building_warehouse_max_space_for_resource(b, resource); // max by tile layout
-    unsigned char free_space_overall = b->resources[RESOURCE_NONE]; // total free space
+    unsigned char resource_space_limit = building_warehouse_max_space_for_resource(warehouse, resource); // max by tile layout
+    unsigned char free_space_overall = warehouse->resources[RESOURCE_NONE]; // total free space
 
     unsigned char available_space = MIN(free_space_overall, resource_space_limit); // tile storage and free space
     unsigned char max_receptible = MIN(remaining_allowed, available_space);
     // Max the building is allowed to receive, considering all limits
     // allowed remaining is the amount that can be added to the warehouse considering set limit and current storage
-    max_receptible = max_receptible < 0 ? 0 : max_receptible; // in case current storage exceeds limits, 0
 
     return max_receptible;
 }
@@ -553,24 +565,24 @@ int building_warehouses_remove_resource(int resource, int amount)
     return amount;
 }
 
-int building_warehouse_accepts_storage(building *b, int resource, int *understaffed)
+int building_warehouse_accepts_storage(building *warehouse, int resource, int *understaffed)
 {
-    if (b->state != BUILDING_STATE_IN_USE || b->type != BUILDING_WAREHOUSE ||
-        !b->has_road_access || b->distance_from_entry <= 0 || b->has_plague) {
+    if (warehouse->state != BUILDING_STATE_IN_USE || warehouse->type != BUILDING_WAREHOUSE ||
+        !warehouse->has_road_access || warehouse->distance_from_entry <= 0 || warehouse->has_plague) {
         return 0;
     }
-    if (building_storage_get_state(b, resource, 1) == BUILDING_STORAGE_STATE_NOT_ACCEPTING ||
-        building_storage_get_empty_all(b->id)) {
+    if (building_storage_get_state(warehouse, resource, 1) == BUILDING_STORAGE_STATE_NOT_ACCEPTING ||
+        building_storage_get_empty_all(warehouse->id)) {
         return 0;
     }
-    int pct_workers = calc_percentage(b->num_workers, model_get_building(b->type)->laborers);
+    int pct_workers = calc_percentage(warehouse->num_workers, model_get_building(warehouse->type)->laborers);
     if (pct_workers < 100) {
         if (understaffed) {
             *understaffed += 1;
         }
         return 0;
     }
-    if (building_warehouse_max_space_for_resource(b, resource)) {
+    if (building_warehouse_max_space_for_resource(warehouse, resource)) {
         return 1;
     }
     return 0;
@@ -582,7 +594,7 @@ int building_warehouse_for_storing(int src_building_id, int x, int y, int resour
     int min_dist = INFINITE;
     int min_building_id = 0;
     for (building *b = building_first_of_type(BUILDING_WAREHOUSE); b; b = b->next_of_type) {
-        if (b->id == src_building_id || (road_network_id != -1 && b->road_network_id != road_network_id) ||
+        if (b->id == (unsigned int) src_building_id || (road_network_id != -1 && b->road_network_id != road_network_id) ||
             !building_warehouse_accepts_storage(b, resource, understaffed) ||
             (building_warehouse_maximum_receptible_amount(b, resource) <= 0)) {
             continue;

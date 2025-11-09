@@ -5,7 +5,7 @@
 #include "building/construction.h"
 #include "building/granary.h"
 #include "building/industry.h"
-#include "building/model.h"
+#include "building/properties.h"
 #include "building/storage.h"
 #include "building/type.h"
 #include "city/view.h"
@@ -17,6 +17,8 @@
 #include "graphics/graphics.h"
 #include "graphics/image.h"
 #include "graphics/renderer.h"
+#include "graphics/weather.h"
+#include "graphics/window.h"
 #include "map/bridge.h"
 #include "map/building.h"
 #include "map/figure.h"
@@ -229,12 +231,12 @@ static color_t get_building_color_mask(const building *b)
     return color_mask;
 }
 
-static int is_building_selected(const building *b)
+static int is_building_selected(building *b)
 {
     if (!config_get(CONFIG_UI_HIGHLIGHT_SELECTED_BUILDING)) { // if option not selected in config, abandon
         return 0;
     }
-    int main_part_id = building_main(b)->id; //check if side or main part is selected
+    unsigned int main_part_id = building_main(b)->id; //check if side or main part is selected
     if (b->id == city_roamer_preview_selected_building_id || main_part_id == city_roamer_preview_selected_building_id) {
         return 1;
     } else {
@@ -925,6 +927,7 @@ void city_with_overlay_draw(const map_tile *tile, unsigned int roamer_preview_bu
     if (overlay->draw_custom_layer) {
         city_view_foreach_valid_map_tile(draw_custom_layer);
     }
+    update_weather();
 }
 
 int city_with_overlay_get_tooltip_text(tooltip_context *c, int grid_offset)
