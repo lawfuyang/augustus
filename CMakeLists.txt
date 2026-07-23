@@ -71,6 +71,11 @@ if(${TARGET_PLATFORM} STREQUAL "ios")
     set(CMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2")
 endif()
 
+# [rlaw] BEGIN: Enable multi-threading
+if(MSVC)
+    add_compile_options(/MP)
+endif()
+# [rlaw] END
 
 # Enable "Edit and Continue" for MSVC
 if (POLICY CMP0141)

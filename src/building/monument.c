@@ -17,6 +17,10 @@
 #include "map/terrain.h"
 #include "scenario/property.h"
 
+
+#include "building/warehouse.h" // [rlaw] vanilla-like instant monument material consumption
+
+
 #define DELIVERY_ARRAY_SIZE_STEP 200
 #define ORIGINAL_DELIVERY_BUFFER_SIZE 16
 #define MODULES_PER_TEMPLE 2
@@ -476,6 +480,37 @@ void building_monument_finish_monuments(void)
         }
     }
 }
+
+// [rlaw] BEGIN: vanilla-like instant resource consumption from warehouses
+void building_monument_consume_warehouse_resources(void)
+{
+    for (building_type type = BUILDING_MONUMENT_FIRST_ID; type < BUILDING_TYPE_MAX; type++) {
+        if (!MONUMENT_TYPES[type]) {
+            continue;
+        }
+        for (building *b = building_first_of_type(type); b; b = b->next_of_type) {
+            if (b->monument.phase == MONUMENT_FINISHED ||
+                building_monument_is_construction_halted(b)) {
+                continue;
+            }
+            for (int resource = RESOURCE_MIN; resource < RESOURCE_MAX; resource++) {
+                if (!resource_is_storable(resource)) {
+                    continue;
+                }
+                if (b->resources[resource] > 0) {
+                    int consumed = b->resources[resource] -
+                        building_warehouses_remove_resource(resource, b->resources[resource]);
+                    b->resources[resource] -= consumed;
+                }
+            }
+            if (!building_monument_needs_resources(b) &&
+                b->resources[RESOURCE_NONE] <= 0) {
+                building_monument_progress(b);
+            }
+        }
+    }
+}
+// [rlaw] END
 
 int building_monument_needs_resources(building *b)
 {

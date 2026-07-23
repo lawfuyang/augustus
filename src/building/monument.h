@@ -66,4 +66,7 @@ int building_monument_is_construction_halted(building *b);
 int building_monument_toggle_construction_halted(building *b);
 int building_monument_is_unfinished_monument(const building *b);
 
+
+void building_monument_consume_warehouse_resources(void); // [rlaw] vanilla-like instant resource consumption from warehouses
+
 #endif // BUILDING_MONUMENT_H
