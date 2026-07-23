@@ -129,6 +129,8 @@ void trade_route_reset_traded(int route_id)
 
 int trade_route_limit_reached(int route_id, resource_type resource, int buying)
 {
+    return 0; // [rlaw]: unlimited trade limits — never report quota reached
+
     route_resource *route = get_route_resource(route_id, buying);
     return route->traded[resource] >= route->limit[resource];
 }
@@ -192,9 +194,6 @@ void trade_routes_migrate_to_buys_sells(buffer *limit, buffer *traded, int versi
             resource_type remapped = resource_remap(r);
             int limit_amount = buffer_read_i32(limit);
             int traded_amount = buffer_read_i32(traded);
-
-            limit_amount = 65535; // [rlaw]: hax
-            traded_amount = 65535; // [rlaw]: hax
 
             if (empire_city_buys_resource(city_id, remapped)) {
                 route->buys.limit[remapped] = limit_amount;

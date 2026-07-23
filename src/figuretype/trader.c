@@ -340,6 +340,11 @@ static int get_closest_storage(const figure *f, int x, int y, int city_id, map_p
             if (route_id == 0 && f->type == FIGURE_NATIVE_TRADER) { // no limits for native traders
                 remaining_buy = figure_trade_land_trade_units();
             }
+            // [rlaw] BEGIN: unlimited trade — override with per-visit capacity
+            remaining_sell = max_trade_units;
+            remaining_buy = max_trade_units;
+            // [rlaw] END
+
             if (resource_sell && remaining_sell > 0) {
                 sellable[r] = remaining_sell;
             }
