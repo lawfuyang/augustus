@@ -189,9 +189,9 @@ static void calculate_working_population(void)
         }
     }
 
+    city_labor_calculate_workers(num_plebs, num_patricians);
 
-    // [rlaw]: patricians contribute to labour pool
-    city_labor_calculate_workers(num_plebs + num_patricians, 0);
+    city_labor_calculate_workers(num_plebs + num_patricians, 0); // [rlaw]: patricians contribute to labour pool
 }
 
 void house_population_update_migration(void)
