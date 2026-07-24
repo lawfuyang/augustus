@@ -106,6 +106,47 @@ int map_has_road_access_warehouse(int x, int y, map_point *road)
         has_road = 1;
     }
 
+    // [rlaw] BEGIN: vanilla-like full perimeter road check for warehouse
+    if (!has_road) {
+        // reconstruct NW (top-left) origin from tower position
+        int ox = x;
+        int oy = y;
+        switch (warehouse->subtype.orientation) {
+            case 1: oy -= 2; break;
+            case 2: ox -= 2; oy -= 2; break;
+            case 3: ox -= 2; break;
+        }
+        // top edge
+        for (int i = 0; i < 3 && !has_road; i++) {
+            if (map_terrain_is(map_grid_offset(ox + i, oy - 1), valid_terrain) &&
+                (!building_type_is_roadblock(building_get(map_building_at(map_grid_offset(ox + i, oy - 1)))->type) || glp)) {
+                rx = ox + i; ry = oy - 1; has_road = 1;
+            }
+        }
+        // bottom edge
+        for (int i = 0; i < 3 && !has_road; i++) {
+            if (map_terrain_is(map_grid_offset(ox + i, oy + 3), valid_terrain) &&
+                (!building_type_is_roadblock(building_get(map_building_at(map_grid_offset(ox + i, oy + 3)))->type) || glp)) {
+                rx = ox + i; ry = oy + 3; has_road = 1;
+            }
+        }
+        // left edge
+        for (int i = 0; i < 3 && !has_road; i++) {
+            if (map_terrain_is(map_grid_offset(ox - 1, oy + i), valid_terrain) &&
+                (!building_type_is_roadblock(building_get(map_building_at(map_grid_offset(ox - 1, oy + i)))->type) || glp)) {
+                rx = ox - 1; ry = oy + i; has_road = 1;
+            }
+        }
+        // right edge
+        for (int i = 0; i < 3 && !has_road; i++) {
+            if (map_terrain_is(map_grid_offset(ox + 3, oy + i), valid_terrain) &&
+                (!building_type_is_roadblock(building_get(map_building_at(map_grid_offset(ox + 3, oy + i)))->type) || glp)) {
+                rx = ox + 3; ry = oy + i; has_road = 1;
+            }
+        }
+    }
+    // [rlaw] END
+
     if (has_road) {
         warehouse->road_access_x = rx;
         warehouse->road_access_y = ry;
