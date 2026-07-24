@@ -38,6 +38,7 @@ static int get_land_type_citizen_building(int grid_offset)
             return CITIZEN_N1_BLOCKED;
         case BUILDING_WAREHOUSE:
             type = CITIZEN_0_ROAD;
+            type = CITIZEN_N1_BLOCKED; // // [rlaw]: vanilla behavior - warehouse is a solid building; citizens/roamers do not walk into the tower.
             break;
         case BUILDING_GATEHOUSE:
             if (terrain & TERRAIN_HIGHWAY) {
