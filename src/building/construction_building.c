@@ -633,14 +633,6 @@ int building_construction_place_building(building_type type, int x, int y, int e
         }
     }
     if (type == BUILDING_TOWER) {
-        if (!map_terrain_all_tiles_in_radius_are(x, y, size, 0, TERRAIN_WALL)) {
-            city_warning_show(WARNING_CLEAR_LAND_NEEDED, NEW_WARNING_SLOT);
-            return 0;
-        }
-        if (!map_terrain_all_tiles_in_radius_are(x, y, 2, 0, TERRAIN_BUILDING)) {
-            city_warning_show(WARNING_WALL_NEEDED, NEW_WARNING_SLOT);
-            return 0;
-        }
         if (!building_orientation) {
             building_orientation = building_rotation_get_rotation() + 1;
             if (building_orientation > 4) {
