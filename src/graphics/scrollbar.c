@@ -9,6 +9,7 @@
 #include "graphics/image_button.h"
 #include "graphics/panel.h"
 #include "graphics/screen.h"
+#include "graphics/window.h"
 
 #define BLOCK_SIZE 16
 #define LEGACY_SCROLLBAR_UP_IMAGE_ID 8
@@ -184,6 +185,7 @@ void scrollbar_draw(scrollbar_type *scrollbar)
             &scrollbar->image_button_scroll_down, 1);
         position_scrollbar_dot_button(scrollbar);
         image_buttons_draw(scrollbar->x, scrollbar->y, &scrollbar->image_button_scroll_dot, 1);
+        window_invalidate();
     }
 }
 
@@ -224,6 +226,7 @@ static int handle_touch(scrollbar_type *scrollbar, const touch *t, int in_dialog
     if (scrollbar->on_scroll_callback && old_position != scrollbar->scroll_position) {
         scrollbar->on_scroll_callback();
     }
+    window_request_refresh();
     return active;
 }
 
