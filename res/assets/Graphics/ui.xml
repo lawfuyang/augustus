@@ -1548,6 +1548,8 @@
 	<image id="Scrollbar_Up_02" src="Scrollbar_Up_02"/>
 	<image id="Scrollbar_Up_03" src="Scrollbar_Up_03"/>
 	<image id="Scrollbar_Up_04" src="Scrollbar_Up_04"/>
+	<image id="Scrollbar_Lines_D_01" src="Scrollbar_Lines_D_01"/>
+	<image id="Scrollbar_Lines_L_01" src="Scrollbar_Lines_L_01"/>
 	<image id="Scrollbar_Middle_01" src="Scrollbar_Middle_01"/>
 	<image id="Scrollbar_Middle_02" src="Scrollbar_Middle_02"/>
 	<image id="Scrollbar_Middle_03" src="Scrollbar_Middle_03"/>
