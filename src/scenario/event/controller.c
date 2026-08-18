@@ -616,7 +616,7 @@ void scenario_events_migrate_to_formulas(void)
             action = array_item(current->actions, j);
             if (action->type == ACTION_TYPE_ADJUST_CITY_HEALTH || action->type == ACTION_TYPE_ADJUST_ROME_WAGES ||
                 action->type == ACTION_TYPE_ADJUST_MONEY || action->type == ACTION_TYPE_ADJUST_SAVINGS) {
-                return;
+                continue;
             }
             scenario_parameters_foreach_in_action(action, migrate_parameters_action); //migrate parameters if needed
         }
@@ -651,7 +651,7 @@ void scenario_events_min_max_migrate_to_formulas(int version)
                 }
                 uint8_t buffer[32];
                 memset(buffer, 0, sizeof(buffer));
-                sprintf((char *)buffer, "{%i,%i}", condition->parameter3, condition->parameter4);
+                sprintf((char *)buffer, "{%i,%i}", condition->parameter2, condition->parameter3);
                 unsigned int id = scenario_formula_add((const uint8_t *) buffer, 0, 1000000000);
                 condition->parameter2 = id;
             }
