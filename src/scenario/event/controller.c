@@ -651,7 +651,7 @@ void scenario_events_min_max_migrate_to_formulas(int version)
                 }
                 uint8_t buffer[32];
                 memset(buffer, 0, sizeof(buffer));
-                sprintf((char *)buffer, "{%i,%i}", condition->parameter3, condition->parameter4);
+                sprintf((char *)buffer, "{%i,%i}", condition->parameter2, condition->parameter3);
                 unsigned int id = scenario_formula_add((const uint8_t *) buffer, 0, 1000000000);
                 condition->parameter2 = id;
             }
