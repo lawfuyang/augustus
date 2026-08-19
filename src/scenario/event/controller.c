@@ -616,7 +616,7 @@ void scenario_events_migrate_to_formulas(void)
             action = array_item(current->actions, j);
             if (action->type == ACTION_TYPE_ADJUST_CITY_HEALTH || action->type == ACTION_TYPE_ADJUST_ROME_WAGES ||
                 action->type == ACTION_TYPE_ADJUST_MONEY || action->type == ACTION_TYPE_ADJUST_SAVINGS) {
-                continue;
+                continue; // skip these since they are already handled in min max migration
             }
             scenario_parameters_foreach_in_action(action, migrate_parameters_action); //migrate parameters if needed
         }
@@ -626,6 +626,9 @@ void scenario_events_migrate_to_formulas(void)
             group = array_item(current->condition_groups, j);
             for (unsigned int k = 0; k < group->conditions.size; k++) {
                 condition = array_item(group->conditions, k);
+                if (condition->type == CONDITION_TYPE_TIME_PASSED) {
+                    continue;
+                }
                 scenario_parameters_foreach_in_condition(condition, migrate_parameters_condition); //migrate parameters if needed
             }
         }
@@ -647,7 +650,7 @@ void scenario_events_min_max_migrate_to_formulas(int version)
             for (unsigned int k = 0; k < group->conditions.size; k++) {
                 condition = array_item(group->conditions, k);
                 if (condition->type != CONDITION_TYPE_TIME_PASSED) {
-                    continue;
+                    continue; // skip this since it is already handled in min max migration
                 }
                 uint8_t buffer[32];
                 memset(buffer, 0, sizeof(buffer));
