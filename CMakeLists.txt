@@ -585,7 +585,6 @@ set(GRAPHICS_FILES
     ${PROJECT_SOURCE_DIR}/src/graphics/arrow_button.c
     ${PROJECT_SOURCE_DIR}/src/graphics/button.c
     ${PROJECT_SOURCE_DIR}/src/graphics/clouds.c
-    ${PROJECT_SOURCE_DIR}/src/graphics/complex_button.c
     ${PROJECT_SOURCE_DIR}/src/graphics/weather.c
     ${PROJECT_SOURCE_DIR}/src/graphics/font.c
     ${PROJECT_SOURCE_DIR}/src/graphics/generic_button.c
@@ -631,7 +630,12 @@ set(WIDGET_FILES
     ${PROJECT_SOURCE_DIR}/src/widget/city/overlay/other.c
     ${PROJECT_SOURCE_DIR}/src/widget/city/overlay/overlay.c
     ${PROJECT_SOURCE_DIR}/src/widget/city/overlay/risks.c
+    ${PROJECT_SOURCE_DIR}/src/widget/checkbox_button.c
+    ${PROJECT_SOURCE_DIR}/src/widget/complex_button.c
+    ${PROJECT_SOURCE_DIR}/src/widget/cycling_button.c
+    ${PROJECT_SOURCE_DIR}/src/widget/date_picker.c
     ${PROJECT_SOURCE_DIR}/src/widget/dropdown_button.c
+    ${PROJECT_SOURCE_DIR}/src/widget/empire_funds.c
     ${PROJECT_SOURCE_DIR}/src/widget/grid_picker.c
     ${PROJECT_SOURCE_DIR}/src/widget/input_box.c
     ${PROJECT_SOURCE_DIR}/src/widget/map_editor.c
@@ -643,6 +647,7 @@ set(WIDGET_FILES
     ${PROJECT_SOURCE_DIR}/src/widget/sidebar/extra.c
     ${PROJECT_SOURCE_DIR}/src/widget/sidebar/military.c
     ${PROJECT_SOURCE_DIR}/src/widget/sidebar/slide.c
+    ${PROJECT_SOURCE_DIR}/src/widget/slider.c
     ${PROJECT_SOURCE_DIR}/src/widget/text_block.c
     ${PROJECT_SOURCE_DIR}/src/widget/top_menu.c
     ${PROJECT_SOURCE_DIR}/src/widget/top_menu_editor.c
