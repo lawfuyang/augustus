@@ -100,7 +100,7 @@ static translation_string all_strings[] = {
     {TR_CONFIG_GRANARIES_GET_DOUBLE, "Double the capacity of cart pushers from getting granaries"},
     {TR_CONFIG_ALLOW_EXPORTING_FROM_GRANARIES, "Allow traders to export food from granaries"},
     {TR_CONFIG_TOWER_SENTRIES_GO_OFFROAD, "Tower sentries don't need road access from barracks"},
-    {TR_CONFIG_FARMS_DELIVER_CLOSE, "Farms and wharves deliver only to nearby granaries"},
+    {TR_CONFIG_FARMS_DELIVER_CLOSE, "Farms and wharves deliver only to nearby granaries and warehouses"},
     {TR_CONFIG_DELIVER_ONLY_TO_ACCEPTING_GRANARIES, "Food isn't delivered to getting granaries"},
     {TR_CONFIG_ALL_HOUSES_MERGE, "All houses merge"},
     {TR_CONFIG_WINE_COUNTS_IF_OPEN_TRADE_ROUTE, "Open trade route counts as providing different wine type"},
@@ -2354,6 +2354,10 @@ static translation_string all_strings[] = {
     {TR_WIDGET_DN, "Dn"},
     {TR_SIDEBAR_DATE_JUMP_TO_CURRENT, "Click to skip to current year"},
     {TR_CONFIG_FIX_EMPIRE_MAP_DIMENSIONS, "Extend map viewport to fullscreen"},
+    {TR_HOTKEY_SAVE_QUICKSAVE, "Quicksave"},
+    {TR_HOTKEY_SAVE_QUICKLOAD, "Quickload"},
+    {TR_CITY_WARNING_QUICKSAVE_SUCCESS, "Game saved successfully."},
+    {TR_CITY_WARNING_QUICKLOAD_SUCCESS, "Game loaded successfully."},
 };
 
 void translation_english(const translation_string **strings, int *num_strings)
